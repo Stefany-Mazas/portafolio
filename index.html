@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- 2. Luego Bootstrap -->
+  <link rel="stylesheet" href="bootstrap.min.css">
+  
+  <!-- 3. Finalmente tu CSS personalizado -->
+  <link rel="stylesheet" href="style.css">
+  <title>Portafolio ✨ Stefany Mazas | Frontend Developer</title>
+  
+  <style>
+    :root {
+      --bg: #1F2024;
+      --text: #e2e8f0;
+      --accent: #8b5cf6;
+      --accent2: #06b6d4;
+      --card: #1e1e2e;
+      --border: #334155;
+      --font: 'Segoe UI', system-ui, sans-serif;
+      --font-heading: 'Segoe UI', system-ui, sans-serif;
+      --header-height: 80px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --accent: #7c3aed;
+      --accent2: #0891b2;
+      --card: #ffffff;
+      --border: #cbd5e1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
+    
+    body {
+      font-family: 'Roboto Mono', monospace !important;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.4s, color 0.4s;
+      overflow-x: hidden;
+      padding-top: var(--header-height);
+      line-height: 1.6;
+    }
+    
+    /* ===== CURSOR PERSONALIZADO ===== */
+    .cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+      z-index: 9999;
+      mix-blend-mode: difference;
+    }
+    .cursor.hover {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      opacity: 0.3;
+      border-color: transparent;
+    }
+    
+    /* ===== BALL 3D CON SCROLL ===== */
+    .scroll-ball-container {
+      position: fixed;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      pointer-events: none;
+    }
+    
+    /* Ocultar en móviles */
+    @media (max-width: 768px) {
+      .scroll-ball-container {
+        display: none;
+      }
+    }
+    
+    .ball {
+      animation-name: bounceBall;
+      animation-duration: 1.2s;
+      animation-iteration-count: infinite;
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+      border-radius: 50%;
+      height: 60px;
+      position: relative;
+      transform-style: preserve-3d;
+      width: 60px;
+      z-index: 101;
+      transition: transform 0.08s linear;
+    }
+    
+    .ball::before {
+      background: radial-gradient(circle at 36px 20px, #ff8c16, #b35100);
+      border: 2px solid #333333;
+      border-radius: 50%;
+      content: "";
+      height: calc(100% + 6px);
+      left: -6px;
+      position: absolute;
+      top: -3px;
+      transform: translateZ(1vmin);
+      width: calc(100% + 6px);
+    }
+    
+    .ball .inner {
+      animation-name: rotateBall;
+      animation-duration: 25s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      border-radius: 50%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      width: 100%;
+    }
+    
+    .ball .line::before,
+    .ball .line::after {
+      border: 2px solid #333333;
+      border-radius: 50%;
+      content: "";
+      height: 99%;
+      position: absolute;
+      width: 99%;
+    }
+    
+    .ball .line::before {
+      transform: rotate3d(0, 0, 0, 0);
+    }
+    
+    .ball .line::after {
+      transform: rotate3d(1, 0, 0, 90deg);
+    }
+    
+    .ball .line--two::before {
+      transform: rotate3d(0, 0, 0, 2deg);
+    }
+    
+    .ball .line--two::after {
+      transform: rotate3d(1, 0, 0, 88deg);
+    }
+    
+    .ball .oval::before,
+    .ball .oval::after {
+      border-top: 4px solid #333333;
+      border-radius: 50%;
+      content: "";
+      height: 99%;
+      position: absolute;
+      width: 99%;
+    }
+    
+    .ball .oval::before {
+      transform: rotate3d(1, 0, 0, 45deg) translate3d(0, 0, 6px);
+    }
+    
+    .ball .oval::after {
+      transform: rotate3d(1, 0, 0, -45deg) translate3d(0, 0, -6px);
+    }
+    
+    .ball .oval--two::before {
+      transform: rotate3d(1, 0, 0, 135deg) translate3d(0, 0, -6px);
+    }
+    
+    .ball .oval--two::after {
+      transform: rotate3d(1, 0, 0, -135deg) translate3d(0, 0, 6px);
+    }
+    
+    @keyframes rotateBall {
+      0% {
+        transform: rotateY(0deg) rotateX(0deg) rotateZ(0deg);
+      }
+      50% {
+        transform: rotateY(360deg) rotateX(360deg) rotateZ(0deg);
+      }
+      100% {
+        transform: rotateY(720deg) rotateX(720deg) rotateZ(360deg);
+      }
+    }
+    
+    @keyframes bounceBall {
+      0% {
+        transform: translateY(-70px) scale(1, 1);
+      }
+      15% {
+        transform: translateY(-56px) scale(1, 1);
+      }
+      45% {
+        transform: translateY(70px) scale(1, 1);
+      }
+      50% {
+        transform: translateY(73.5px) scale(1, 0.92);
+      }
+      55% {
+        transform: translateY(70px) scale(1, 0.95);
+      }
+      85% {
+        transform: translateY(-56px) scale(1, 1);
+      }
+      95% {
+        transform: translateY(-70px) scale(1, 1);
+      }
+      100% {
+        transform: translateY(-70px) scale(1, 1);
+      }
+    }
+    
+    @keyframes bounceShadow {
+      0% {
+        filter: blur(3px);
+        opacity: 0.6;
+        transform: translateY(73px) scale(0.5, 0.5);
+      }
+      45% {
+        filter: blur(1px);
+        opacity: 0.9;
+        transform: translateY(73px) scale(1, 1);
+      }
+      55% {
+        filter: blur(1px);
+        opacity: 0.9;
+        transform: translateY(73px) scale(1, 1);
+      }
+      100% {
+        filter: blur(3px);
+        opacity: 0.6;
+        transform: translateY(73px) scale(0.5, 0.5);
+      }
+    }
+    
+    .shadow {
+      animation-name: bounceShadow;
+      animation-duration: 1.2s;
+      animation-iteration-count: infinite;
+      animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+      background: black;
+      filter: blur(2px);
+      border-radius: 50%;
+      height: 6px;
+      transform: translateY(73px);
+      width: 54px;
+      margin: 0 auto;
+    }
+    
+    /* ===== HEADER CON GATITO ===== */
+    .header-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      transition: background 0.4s, border-color 0.4s;
+    }
+    
+    .cat-track {
+      position: absolute;
+      top: 5px;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 1001;
+    }
+    
+    .walking-cat {
+      position: absolute;
+      top: 0;
+      left: -100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: walk 18s linear infinite;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+      background: transparent;
+    }
+    
+    .walking-cat img {
+      height: 65px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+      background: transparent !important;
+      mix-blend-mode: multiply;
+    }
+    
+    @keyframes walk {
+      0% { left: -100px; transform: scaleX(1); }
+      45% { left: calc(100% + 50px); transform: scaleX(1); }
+      55% { left: calc(100% + 50px); transform: scaleX(-1); }
+      100% { left: -100px; transform: scaleX(-1); }
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      height: var(--header-height);
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .logo { 
+      font-weight: 800; 
+      font-size: 1.8rem; 
+      background: linear-gradient(45deg, var(--accent), var(--accent2));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    
+    .logo:hover { transform: scale(1.05); }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+    
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+    
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.3s;
+    }
+    
+    nav a:hover { color: var(--accent); }
+    nav a:hover::after { width: 100%; }
+    
+    .theme-toggle, .fun-toggle {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+    .theme-toggle:hover, .fun-toggle:hover {
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+    
+    .container { 
+      max-width: 1200px; 
+      margin: 0 auto; 
+      padding: 0 2rem; 
+      position: relative; 
+      z-index: 1;
+    }
+    
+    /* ===== HERO SECTION ===== */
+    .hero {
+      text-align: center;
+      padding: 7rem 1rem 2rem;
+      margin-bottom: 3rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      border: none;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.5);
+    }
+    
+    /* ===== SECCIONES ===== */
+    section {
+      padding: 4rem 0;
+      margin-bottom: 2rem;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .section-subtitle {
+      text-align: center;
+      opacity: 0.8;
+      margin-bottom: 3rem;
+      font-size: 1.1rem;
+    }
+    
+    /* ===== GRID DE PROYECTOS ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.3);
+    }
+    
+    .card:hover::before { transform: scaleX(1); }
+    
+    .card-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      border-radius: 12px 12px 0 0;
+      margin: -2rem -2rem 1.5rem -2rem; /* Compensa el padding del card */
+    }
+
+    .card-image {
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--primary), #06b6d4);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-image {
+      transform: scale(1.1);
+    }
+    
+    .card-overlay {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(139, 92, 246, 0.9);
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(4px);
+      transform: translateY(-10px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover .card-overlay {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+
+    .card-content {
+      padding: 0 0.5rem 0.5rem;
+    }
+
+    .card h3 { 
+      margin-bottom: 0.8rem; 
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+    
+    .card p { 
+      font-size: 0.95rem; 
+      opacity: 0.85; 
+      margin-bottom: 1.2rem; 
+      line-height: 1.6; 
+    }
+    /* Placeholder gradiente si no hay imagen */
+    .card-image-wrapper.placeholder {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
+
+    .card-image-wrapper.placeholder::before {
+      content: '🚀';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4rem;
+      opacity: 0.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .card-image-wrapper {
+        height: 180px;
+        margin: -1.5rem -1.5rem 1rem -1.5rem;
+      }
+    }
+
+    /* Efecto de carga skeleton */
+    .card-image-wrapper.skeleton {
+      background: linear-gradient(90deg, var(--card) 25%, var(--border) 50%, var(--card) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    
+    .tags { 
+      display: flex; 
+      gap: 0.5rem; 
+      flex-wrap: wrap; 
+    }
+    
+    .tag {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      font-family: 'Roboto Mono', monospace !important;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    /* ===== SOBRE MÍ ===== */
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 3rem;
+      align-items: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .about-avatar {
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6rem;
+      box-shadow: 0 20px 60px -20px rgba(139, 92, 246, 0.5);
+    }
+    
+    .about-text h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+    
+    .about-text p {
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+    
+    /* ===== TESTIMONIOS ===== */
+    .testimonials {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 3rem;
+      margin: 4rem 0;
+    }
+    
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .testimonial-card {
+      background: var(--bg);
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    
+    .testimonial-card::before {
+      content: '"';
+      font-size: 4rem;
+      color: var(--accent);
+      opacity: 0.3;
+      position: absolute;
+      top: 10px;
+      left: 20px;
+    }
+    
+    .testimonial-text {
+      margin-bottom: 1.5rem;
+      font-style: italic;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    
+    .author-info h4 {
+      color: var(--accent);
+      margin-bottom: 0.2rem;
+    }
+    
+    .author-info p {
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    
+    /* ===== SKILLS ===== */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    
+    .skill-category {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+    
+    .skill-category h3 {
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .skill-list {
+      list-style: none;
+    }
+    
+    .skill-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0.9;
+    }
+    
+    .skill-list li:last-child {
+      border-bottom: none;
+    }
+    
+    /* ===== CONTACTO ===== */
+    .contact {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
+      border-radius: 24px;
+      padding: 4rem 2rem;
+      margin: 4rem 0;
+    }
+    
+    .contact h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .contact-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+      text-decoration: none;
+      padding: 1rem 2rem;
+      background: var(--card);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+    
+    .contact-link:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.3);
+    }
+    
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 3rem 0;
+      border-top: 1px solid var(--border);
+      opacity: 0.85;
+      margin-top: 4rem;
+    }
+    
+    footer a { 
+      color: var(--accent); 
+      text-decoration: none; 
+      margin: 0 0.5rem;
+      transition: color 0.3s;
+    }
+    footer a:hover { 
+      text-decoration: underline;
+      color: var(--accent2);
+    }
+    
+    /* ===== MODO FIESTA ===== */
+    [data-fun="true"] {
+      animation: rainbow-bg 8s linear infinite;
+    }
+    [data-fun="true"] .card {
+      animation: float 3s ease-in-out infinite;
+    }
+    [data-fun="true"] .card:nth-child(2) { animation-delay: 0.5s; }
+    [data-fun="true"] .card:nth-child(3) { animation-delay: 1s; }
+    [data-fun="true"] .walking-cat {
+      animation-duration: 8s;
+    }
+    
+    @keyframes rainbow-bg {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .cursor { display: none !important; }
+      * { cursor: auto !important; }
+      
+      nav ul {
+        display: none;
+      }
+      
+      .hero { padding: 3rem 1rem 2rem; }
+      .about-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .about-avatar {
+        margin: 0 auto;
+      }
+      
+      header { padding: 0.8rem 1rem; }
+      .cat-track { height: 55px; top: 0; }
+      .walking-cat img { height: 50px; }
+      body { padding-top: 70px; }
+      .header-wrapper { height: 70px; }
+      
+      .testimonials { padding: 2rem 1rem; }
+    }
+    
+    /* ===== CONFETTI ===== */
+    .confetti {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Scroll suave */
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- CURSOR PERSONALIZADO -->
+  <div class="cursor" id="cursor"></div>
+  
+  <!-- BALL 3D QUE SE MUEVE CON EL SCROLL -->
+  <div class="scroll-ball-container">
+    <div class="ball">
+      <div class="inner">
+        <div class="line"></div>
+        <div class="line line--two"></div>
+        <div class="oval"></div>
+        <div class="oval oval--two"></div>
+      </div>
+    </div>
+    <div class="shadow"></div>
+  </div>
+  
+  <!-- HEADER CON GATITO -->
+  <div class="header-wrapper">
+    <div class="cat-track" id="catTrack">
+      <div class="walking-cat" id="walkingCat">
+        <img src="img/gato.png" alt="Gatito caminando" style="mix-blend-mode: darken;">
+      </div>
+    </div>
+    <header>
+      <div class="logo">✨ Stefany Mazas</div>
+      <nav>
+        <ul>
+          <li><a href="#inicio" class="interactive">Inicio</a></li>
+          <li><a href="#proyectos" class="interactive">Proyectos</a></li>
+          <li><a href="#sobre-mi" class="interactive">Sobre Mí</a></li>
+          <li><a href="#habilidades" class="interactive">Habilidades</a></li>
+          <li><a href="#contacto" class="interactive">Contacto</a></li>
+        </ul>
+      </nav>
+      <div style="display:flex; gap:0.5rem">
+        <button class="theme-toggle" id="themeToggle">🌓 Tema</button>
+        <button class="fun-toggle" id="funToggle">🎉 Fun</button>
+      </div>
+    </header>
+  </div>
+  
+  <div class="container">
+    <!-- HERO -->
+    <section id="inicio" class="hero">
+      <h1>Hola, soy Stefany Mazas<br>🚀 Creo cosas increíbles para la web</h1>
+      <p>Desarrolladora frontend con pasión por el diseño, la animación y las experiencias que hacen sonreír. Especializada en crear interfaces modernas y funcionales.</p>
+      <div class="cta-buttons">
+        <a href="#proyectos" class="btn btn-primary interactive">Ver Proyectos</a>
+        <a href="#contacto" class="btn btn-secondary interactive">Contáctame</a>
+      </div>
+    </section>
+        <!-- PROYECTOS -->
+    <section id="proyectos">
+      <h2 class="section-title">Mis Proyectos</h2>
+      <p class="section-subtitle">Algunos de mis trabajos más recientes</p>
+      <div class="grid">
+        <a href="editor/figma.html" class="card-link" style="text-decoration: none; color: inherit; display: block;"> 
+          <article class="card interactive">
+            <div class="card-image-wrapper">
+              <img src="img/fig.png" alt="FigmaLite" class="card-image">
+              <div class="card-overlay">
+                <span class="card-category">FigmaLite Pro</span>
+              </div>
+            </div>
+            <div class="card-content">
+              <h3>Figma Lite Pro </h3>
+              <p>Editor de diseño visual completo con capas jerárquicas, responsive dinámico, copiar/pegar desde portapapeles, exportación a PNG/PDF/ZIP, ajustes de imagen avanzados (rotación, radio esquinas, posición) y sistema multi-frame.</p>
+              <div class="tags">
+                <span class="tag">Design Tool</span>
+                <span class="tag">Responsive</span>
+                <span class="tag">Export</span>
+                <span class="tag">Layers</span>
+                <span class="tag">Clipboard</span>
+              </div>
+            </div>
+          </article>
+        </a>
+        
+        <a href="juego/circus.html" class="card-link" style="text-decoration: none; color: inherit; display: block;" target="_blank">
+          <article class="card interactive">
+              <div class="card-image-wrapper">
+                  <img src="img/game.png" alt="Mistic Runner - Juego de habilidad" class="card-image">
+                  <div class="card-overlay">
+                      <span class="card-category">Juego</span>
+                      <span class="card-category ai-badge">🎮 Arcade</span>
+                  </div>
+              </div>
+              <div class="card-content">
+                  <h3>Digital Circus Runner | Juego con IA</h3>
+                  <p>Juego de plataformas estilo runner con sistema de récords, comentarios moderados y modo IA. ¡Esquiva obstáculos y compite por la puntuación más alta!</p>
+                  <div class="tags">
+                      <span class="tag">JavaScript</span>
+                      <span class="tag">HTML5 Canvas</span>
+                      <span class="tag">IA Adaptativa</span>
+                      <span class="tag">LocalStorage</span>
+                  </div>
+                  <div class="card-stats">
+                      <span>⭐ Sistema de récords</span>
+                      <span>💬 Comentarios moderados</span>
+                      <span>🤖 Modo IA</span>
+                  </div>
+              </div>
+          </article>
+      </a>
+
+      <a href="cafeteria/camp.html" class="card-link" style="text-decoration: none; color: inherit; display: block;"> 
+          <article class="card interactive">
+              <div class="card-image-wrapper">
+                  <img src="img/camp.png" alt="Camper Café Pro - Sistema de pedidos con QR" class="card-image">
+                  <div class="card-overlay">
+                      <span class="card-category">Full Stack | PWA</span>
+                  </div>
+              </div>
+              <div class="card-content">
+                  <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+                      <span style="background: #2b4d99; color: white; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;"> Cliente</span>
+                      <span style="background: #8c1a6c; color: white; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;"> POS Scanner</span>
+                      <span style="background: #4caf50; color: white; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.7rem;"> PWA</span>
+                  </div>
+                  <h3>cafeteria</h3>
+                  <p>Sistema completo de Order & Pickup con generación de QR y POS scanner. Incluye carrito de compras, personalización de productos, modo oscuro, y panel de administración para staff.</p>
+                  <div class="tags">
+                      <span class="tag">HTML5/CSS3</span>
+                      <span class="tag">JavaScript Vanilla</span>
+                      <span class="tag">PWA</span>
+                      <span class="tag">LocalStorage</span>
+                      <span class="tag">QR Code</span>
+                      <span class="tag">Accesibilidad WCAG</span>
+                  </div>
+              </div>
+          </article>
+      </a>
+        
+
+    </section>
+
+    
+
+    <!-- SOBRE MÍ -->
+    <section id="sobre-mi">
+      <h2 class="section-title">Sobre Mí</h2>
+      <div class="about-content">
+        <div class="about-avatar interactive"><img src="img/gato.png" alt="Dashboard Analytics" class="card-image"></div>
+        <div class="about-text">
+          <h3>Desarrolladora apasionada por crear</h3>
+          <p>Soy Stefany Mazas, desarrolladora frontend con más de 3 años de experiencia creando experiencias web únicas y memorables.</p>
+          <p>Me especializo en transformar diseños en código limpio y funcional, siempre buscando la mejor experiencia de usuario. Me encanta aprender nuevas tecnologías y mantenerme actualizada con las últimas tendencias del desarrollo web.</p>
+          <p>Cuando no estoy programando, me encontrarás explorando nuevas herramientas de diseño, contribuyendo a proyectos open source o disfrutando de un buen café mientras leo sobre tecnología.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HABILIDADES -->
+    <section id="habilidades">
+      <h2 class="section-title">Habilidades</h2>
+      <p class="section-subtitle">Tecnologías que domino</p>
+      <div class="skills-grid">
+        <div class="skill-category">
+          <h3>💻 Frontend</h3>
+          <ul class="skill-list">
+            <li>HTML5 & CSS3</li>
+            <li>JavaScript (ES6+)</li>
+            <li>React & Vue.js</li>
+            <li>TypeScript</li>
+            <li>Tailwind CSS</li>
+          </ul>
+        </div>
+        <div class="skill-category">
+          <h3>🎨 Diseño</h3>
+          <ul class="skill-list">
+            <li>Figma</li>
+            <li>Adobe XD</li>
+            <li>UI/UX Design</li>
+            <li>Responsive Design</li>
+            <li>Animaciones CSS/JS</li>
+          </ul>
+        </div>
+        <div class="skill-category">
+          <h3>⚙️ Backend</h3>
+          <ul class="skill-list">
+            <li>Node.js</li>
+            <li>Express</li>
+            <li>MongoDB</li>
+            <li>Firebase</li>
+            <li>REST APIs</li>
+          </ul>
+        </div>
+        <div class="skill-category">
+          <h3>🚀 Herramientas</h3>
+          <ul class="skill-list">
+            <li>Git & GitHub</li>
+            <li>Vercel & Netlify</li>
+            <li>Docker</li>
+            <li>CI/CD</li>
+            <li>Agile/Scrum</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section>
+      <div class="testimonials">
+        <h2 class="section-title">Lo que dicen de mí</h2>
+        <p class="section-subtitle">Testimonios de clientes y colegas</p>
+        <div class="testimonial-grid">
+          <div class="testimonial-card">
+            <p class="testimonial-text">Stefany es una desarrolladora excepcional. Su atención al detalle y capacidad para entender las necesidades del cliente es impresionante. El proyecto superó todas nuestras expectativas.</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">MR</div>
+              <div class="author-info">
+                <h4>María Rodríguez</h4>
+                <p>CEO, TechStart</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <p class="testimonial-text">Trabajar con Stefany fue una experiencia increíble. No solo entregó un producto de alta calidad, sino que también nos asesoró en las mejores prácticas de UX.</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">CL</div>
+              <div class="author-info">
+                <h4>Carlos López</h4>
+                <p>Founder, InnovaLab</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <p class="testimonial-text">Su creatividad y habilidades técnicas son sobresalientes. Siempre encuentra soluciones elegantes a problemas complejos. Totalmente recomendada.</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">AP</div>
+              <div class="author-info">
+                <h4>Ana Pérez</h4>
+                <p>Product Manager</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto" class="contact">
+      <h2>¿Trabajamos juntos?</h2>
+      <p>Estoy disponible para proyectos freelance y oportunidades laborales. ¡Hablemos!</p>
+      <div class="contact-links">
+        <a href="#" class="contact-link interactive">
+          <span>💼</span> LinkedIn
+        </a>
+        <a href="#" class="contact-link interactive">
+          <span>🐙</span> GitHub
+        </a>
+
+      </div>
+    </section>
+
+    <footer>
+      <p>Hecho con 💜 y café • 
+        <a href="#" class="interactive">GitHub</a> • 
+        <a href="#" class="interactive">LinkedIn</a> • 
+        <a href="Stefanymazas@gmail.com" class="interactive">Stefanymazas@gmail.com</a>
+      </p>
+      <p style="margin-top: 1rem; font-size: 0.9rem;">© 2026 Stefany Mazas. Todos los derechos reservados.</p>
+    </footer>
+  </div>
+
+  <script>
+    // ===== BALL 3D QUE SIGUE EL SCROLL =====
+    const ballContainer = document.querySelector('.scroll-ball-container');
+    const ball = document.querySelector('.ball');
+    let lastScrollY = window.scrollY;
+    let targetY = 50; // posición inicial en porcentaje
+    let currentY = 50;
+    
+    function updateBallPosition() {
+      const scrollY = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = maxScroll > 0 ? (scrollY / maxScroll) * 100 : 0;
+      
+      // La pelota se mueve entre 15% y 85% de la altura de la pantalla
+      targetY = 15 + (scrollPercent * 0.7);
+      targetY = Math.min(85, Math.max(15, targetY));
+      
+      // Animación suave con requestAnimationFrame
+      function animate() {
+        currentY += (targetY - currentY) * 0.12;
+        ballContainer.style.top = currentY + '%';
+        
+        if (Math.abs(targetY - currentY) > 0.01) {
+          requestAnimationFrame(animate);
+        }
+      }
+      requestAnimationFrame(animate);
+      
+      // Efecto adicional: la pelota rota ligeramente según el scroll
+      const rotation = scrollPercent * 3.6;
+      if (ball) {
+        ball.style.transform = `translateY(${scrollPercent * 0.3}px)`;
+      }
+    }
+    
+    window.addEventListener('scroll', updateBallPosition);
+    updateBallPosition();
+    
+    // ===== CURSOR PERSONALIZADO =====
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    
+    document.querySelectorAll('.interactive, a, button, .card, .logo').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+    
+    // ===== TOGGLE TEMA =====
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme) {
+      html.setAttribute('data-theme', savedTheme);
+      themeToggle.textContent = savedTheme === 'light' ? '🌙' : '🌓';
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      const next = current === 'light' ? '' : 'light';
+      
+      if (next) {
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        themeToggle.textContent = '🌙';
+      } else {
+        html.removeAttribute('data-theme');
+        localStorage.removeItem('theme');
+        themeToggle.textContent = '🌓';
+      }
+    });
+    
+    // ===== MODO FIESTA =====
+    const funToggle = document.getElementById('funToggle');
+    let funMode = false;
+    
+    funToggle.addEventListener('click', () => {
+      funMode = !funMode;
+      if (funMode) {
+        document.body.setAttribute('data-fun', 'true');
+        funToggle.textContent = '✨ Normal';
+        createConfetti();
+      } else {
+        document.body.removeAttribute('data-fun');
+        funToggle.textContent = '🎉 Fun';
+      }
+    });
+    
+    // ===== CONFETTI =====
+    function createConfetti() {
+      const colors = ['#8b5cf6', '#06b6d4', '#f472b6', '#22d3ee', '#a78bfa', '#fbbf24'];
+      for(let i = 0; i < 60; i++) {
+        setTimeout(() => {
+          const conf = document.createElement('div');
+          conf.className = 'confetti';
+          const size = 6 + Math.random() * 10;
+          conf.style.cssText = `
+            width: ${size}px;
+            height: ${size}px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            left: ${Math.random() * 100}vw;
+            top: -20px;
+            border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+            animation-duration: ${2 + Math.random() * 3}s;
+          `;
+          document.body.appendChild(conf);
+          setTimeout(() => conf.remove(), 5000);
+        }, i * 30);
+      }
+    }
+    
+    // ===== CLICK EN LOGO =====
+    document.querySelector('.logo').addEventListener('click', (e) => {
+      createConfetti();
+    });
+    
+    // ===== AJUSTAR TRACK DEL GATO =====
+    function adjustCatTrack() {
+      const catTrack = document.querySelector('.cat-track');
+      if (window.innerWidth <= 768) {
+        if (catTrack) catTrack.style.height = '55px';
+      } else {
+        if (catTrack) catTrack.style.height = '70px';
+      }
+    }
+    
+    window.addEventListener('load', adjustCatTrack);
+    window.addEventListener('resize', adjustCatTrack);
+    
+    console.log('%c✨ Portafolio de Stefany Mazas ✨', 'color: #8b5cf6; font-size: 16px; font-weight: bold;');
+    console.log('%c🎾 La pelota 3D se mueve con el scroll!', 'color: #06b6d4; font-size: 12px;');
+  </script>
+</body>
+</html>
