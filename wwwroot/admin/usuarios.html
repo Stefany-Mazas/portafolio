@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel de Administrador - Ketza-IA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #progresoContainer {
+            margin-top: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Usuarios Registrados</h1>
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Fecha de Registro</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="usersBody">
+            <tr><td colspan="4" style="text-align:center;">Cargando...</td></tr>
+        </tbody>
+    </table>
+    <br />
+    <button onclick="verProgreso()">Ver Progreso de Usuarios</button>
+    <div id="progresoContainer"></div>
+
+    <script>
+        async function cargarUsuarios() {
+            try {
+                const res = await fetch('/api/admin/usuarios');
+                if (!res.ok) throw new Error('Error al obtener usuarios');
+
+                const usuarios = await res.json();
+                const tbody = document.getElementById('usersBody');
+
+                if (usuarios.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay usuarios registrados.</td></tr>';
+                    return;
+                }
+
+                // ✅ Usa PascalCase: Id, Email, FechaRegistro
+                tbody.innerHTML = usuarios.map(u => `
+                        <tr>
+                            <td>${u.Id}</td>
+                            <td>${u.Email}</td>
+                            <td>${new Date(u.FechaRegistro).toLocaleString()}</td>
+                            <td><button class="delete-btn" onclick="eliminar(${u.Id})">Eliminar</button></td>
+                        </tr>
+                    `).join('');
+            } catch (error) {
+                console.error('Error al cargar usuarios:', error);
+                document.getElementById('usersBody').innerHTML =
+                    `<tr><td colspan="4" style="color:red;text-align:center;">${error.message}</td></tr>`;
+            }
+        }
+
+        async function eliminar(id) {
+            if (!confirm('¿Eliminar usuario?')) return;
+            const res = await fetch(`/api/admin/usuarios/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert('Usuario eliminado.');
+                cargarUsuarios();
+            } else {
+                alert('Error al eliminar usuario.');
+            }
+        }
+
+        async function verProgreso() {
+            const email = prompt("Ingresa el correo del usuario:");
+            if (!email) return;
+
+            try {
+                const res = await fetch(`/api/admin/progreso/${email}`);
+                if (!res.ok) {
+                    if (res.status === 404) {
+                        throw new Error('No se encontró progreso para este usuario.');
+                    }
+                    throw new Error('Error al cargar el progreso.');
+                }
+
+                const progresos = await res.json();
+                const container = document.getElementById("progresoContainer");
+
+                if (!Array.isArray(progresos) || progresos.length === 0) {
+                    container.innerHTML = `<h3>Historial de ${email}</h3><p>No hay registros de progreso.</p>`;
+                    return;
+                }
+
+                let html = `<h3>Historial de ${email}</h3>`;
+                progresos.forEach(p => {
+                    // ✅ Usa PascalCase: Fecha, Puntaje, Correctas, etc.
+                    html += `
+                            <p><strong>Fecha:</strong> ${new Date(p.Fecha).toLocaleString()}</p>
+                            <p><strong>Puntaje:</strong> ${p.Puntaje}%</p>
+                            <p><strong>Correctas:</strong> ${p.Correctas}</p>
+                            <p><strong>Incorrectas:</strong> ${p.Incorrectas}</p>
+                            <p><strong>Palabras correctas:</strong> ${p.PalabrasCorrectas || ''}</p>
+                            <p><strong>Palabras incorrectas:</strong> ${p.PalabrasIncorrectas || ''}</p>
+                            <hr>
+                        `;
+                });
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error al cargar progreso:', error);
+                document.getElementById("progresoContainer").innerHTML =
+                    `<p style="color:red;"><strong>Error:</strong> ${error.message}</p>`;
+            }
+        }
+
+        // Cargar usuarios al iniciar
+        cargarUsuarios();
+    </script>
+</body>
+</html>

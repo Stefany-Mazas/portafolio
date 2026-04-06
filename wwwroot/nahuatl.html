@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Traductor Español ↔ Náhuatl con tecnología de IA" />
+    <title>Tlahtoltecnologili - Traductor Español-Náhuatl</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #e6f2ff;
+            --text-color: #2c3e50;
+            --hover-color: #2980b9;
+            --border-color: #dfe6e9;
+            --box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --box-shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .container {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 20px;
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+        }
+
+        .language-selectors {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .language-selector-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .language-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--box-shadow);
+            border: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+            .language-circle.active {
+                border-color: var(--hover-color);
+                box-shadow: var(--box-shadow-hover);
+            }
+
+        .language-flag {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+            .language-flag:hover {
+                transform: scale(1.1);
+            }
+
+        .language-dropdown {
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .swap-button {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.4s ease, background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+            .swap-button:hover {
+                background: linear-gradient(135deg, #2c3e50, #3498db);
+                transform: rotate(180deg) scale(1.1);
+            }
+
+        .translation-container {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .textAreaWithIcons {
+            position: relative;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+            background: white;
+        }
+
+            .textAreaWithIcons:hover,
+            .textAreaWithIcons:focus-within {
+                transform: translateY(-5px);
+                box-shadow: var(--box-shadow-hover);
+                border-color: var(--secondary-color);
+            }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            resize: vertical;
+            font-size: 1rem;
+            background: transparent;
+            transition: var(--transition);
+        }
+
+        .iconGroup {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .iconButton {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .iconButton:hover {
+                background: var(--hover-color);
+                transform: scale(1.1);
+            }
+
+        .translate-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            box-shadow: var(--box-shadow);
+            margin-top: 1rem;
+        }
+
+            .translate-button:hover {
+                background: var(--secondary-color);
+                transform: translateY(-3px);
+                box-shadow: var(--box-shadow-hover);
+            }
+
+        .char-counter {
+            font-size: 0.8rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <!-- Encabezado con selectores -->
+        <header class="header">
+            <div class="language-selectors">
+                <div class="language-selector-group">
+                    <div class="language-circle active" id="sourceLanguageCircle">
+                        <img src="img/spain-flag.png" alt="Español" class="language-flag" id="sourceLanguageFlag" />
+                    </div>
+                    <select id="origen" class="language-dropdown">
+                        <option value="español">Español</option>
+                        <option value="náhuatl">Náhuatl</option>
+                    </select>
+                </div>
+
+                <button class="swap-button" id="cambiarModelo" aria-label="Cambiar modelo y dirección">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+
+                <div class="language-selector-group">
+                    <div class="language-circle" id="targetLanguageCircle">
+                        <img src="img/tlahtolli.png" alt="Náhuatl" class="language-flag" id="targetLanguageFlag" />
+                    </div>
+                    <select id="destino" class="language-dropdown">
+                        <option value="náhuatl">Náhuatl</option>
+                        <option value="español">Español</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <section class="translation-container" aria-live="polite">
+            <!-- Entrada -->
+            <div class="textAreaWithIcons">
+                <label for="texto" class="sr-only">Texto a traducir</label>
+                <textarea id="texto" placeholder="Ingrese el texto (máx. 30 caracteres)" maxlength="30"></textarea>
+                <div class="iconGroup">
+                    <span id="charCount" class="char-counter">0/30</span>
+                    <button class="iconButton" id="listenBtn" title="Dictar"><i class="fas fa-microphone"></i></button>
+                    <button class="iconButton" id="readOriginalBtn" title="Escuchar texto"><i class="fas fa-volume-up"></i></button>
+                </div>
+            </div>
+
+            <!-- Salida -->
+            <div class="textAreaWithIcons">
+                <label for="translatedText" class="sr-only">Traducción resultante</label>
+                <textarea id="translatedText" placeholder="Traducción aparecerá aquí" readonly></textarea>
+                <div class="iconGroup">
+                    <span id="statusMessage"></span>
+                    <button class="iconButton" id="readTranslatedBtn" title="Escuchar traducción"><i class="fas fa-volume-up"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <div class="controls">
+            <button id="translateBtn" class="translate-button">
+                <span class="button-text">Traducir</span>
+                <i class="fas fa-language" aria-hidden="true"></i>
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        let modeloActual = "1_1";
+
+        document.getElementById("cambiarModelo").addEventListener("click", () => {
+            modeloActual = modeloActual === "1_1" ? "1_3" : "1_1";
+            const origen = document.getElementById("origen");
+            const destino = document.getElementById("destino");
+            [origen.value, destino.value] = [destino.value, origen.value];
+
+            const sourceImg = document.getElementById("sourceLanguageFlag");
+            const targetImg = document.getElementById("targetLanguageFlag");
+            [sourceImg.src, targetImg.src] = [targetImg.src, sourceImg.src];
+        });
+
+        document.getElementById("translateBtn").addEventListener("click", async () => {
+            const texto = document.getElementById("texto").value;
+            const origen = document.getElementById("origen").value;
+            const destino = document.getElementById("destino").value;
+
+            const endpoint = `https://399fcebd33cb.ngrok-free.app/traducir`;
+            const payload = { texto, origen, destino };
+
+            try {
+                document.getElementById("statusMessage").textContent = "Traduciendo...";
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (data.resultado) {
+                    document.getElementById("translatedText").value = data.resultado;
+                    document.getElementById("statusMessage").textContent = "Listo ✅";
+                } else {
+                    document.getElementById("translatedText").value = "";
+                    document.getElementById("statusMessage").textContent = "❌ Error: " + (data.error || "Desconocido");
+                }
+            } catch (err) {
+                document.getElementById("translatedText").value = "";
+                document.getElementById("statusMessage").textContent = "❌ Error de red o servidor.";
+                console.error(err);
+            }
+        });
+
+        document.getElementById("texto").addEventListener("input", () => {
+            const len = document.getElementById("texto").value.length;
+            document.getElementById("charCount").textContent = `${len}/30`;
+        });
+
+        // Dictado por voz 🎤
+        document.getElementById("listenBtn").addEventListener("click", () => {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Tu navegador no soporta reconocimiento de voz.");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = document.getElementById("origen").value === "náhuatl" ? "es-MX" : "es-ES";
+
+            recognition.onstart = () => {
+                document.getElementById("statusMessage").textContent = "🎙️ Escuchando...";
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById("texto").value = transcript;
+                document.getElementById("charCount").textContent = `${transcript.length}/30`;
+                document.getElementById("statusMessage").textContent = "✅ Voz capturada";
+            };
+
+            recognition.onerror = () => {
+                document.getElementById("statusMessage").textContent = "❌ No se pudo reconocer la voz";
+            };
+
+            recognition.start();
+        });
+
+        // Lectura por voz 🔊
+        function leerTexto(texto, idioma) {
+            const utterance = new SpeechSynthesisUtterance(texto);
+            utterance.lang = idioma === "náhuatl" ? "es-MX" : "es-ES";
+            speechSynthesis.speak(utterance);
+        }
+
+        document.getElementById("readOriginalBtn").addEventListener("click", () => {
+            const texto = document.getElementById("texto").value;
+            leerTexto(texto, document.getElementById("origen").value);
+        });
+
+        document.getElementById("readTranslatedBtn").addEventListener("click", () => {
+            const texto = document.getElementById("translatedText").value;
+            leerTexto(texto, document.getElementById("destino").value);
+        });
+    </script>
+</body>
+</html>

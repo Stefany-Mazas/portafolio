@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - Ketza-IA</title>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #e0e0e0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+            .tab.active {
+                background: #2c3e50;
+                color: white;
+            }
+
+        .tab-content {
+            display: none;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .edit-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Panel de Administrador - Ketza-IA</h1>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="usuarios">Usuarios</div>
+            <div class="tab" data-tab="progreso">Progreso de Usuarios</div>
+            <div class="tab" data-tab="palabras">Palabras Náhuatl</div>
+        </div>
+
+        <!-- Pestaña: Usuarios -->
+        <div class="tab-content active" id="usuarios">
+            <input type="text" class="search-box" placeholder="Buscar usuario..." onkeyup="filterTable('usuarios')">
+            <table id="usuariosTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Fecha de Registro</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Datos cargados dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pestaña: Progreso -->
+        
+
+        <!-- Pestaña: Palabras -->
+        <div class="tab-content" id="palabras">
+            <input type="text" class="search-box" placeholder="Buscar palabra en español o náhuatl..." onkeyup="filterTable('palabras')">
+            <!-- FORMULARIO AÑADIDO -->
+            <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <h3>Agregar nueva palabra</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="inputEspanol" placeholder="Español (ej: perro)" style="flex: 1; min-width: 200px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" id="inputNahuatl" placeholder="Náhuatl (ej: itzcuintli)" style="flex: 1; min-width: 200px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <button onclick="agregarPalabra()" style="padding: 8px 16px; background: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        ➕ Agregar
+                    </button>
+                </div>
+            </div>
+            <table id="palabrasTable">
+                <thead>
+                    <tr>
+
+                        <th>Español</th>
+                        <th>Nahuatl</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Datos cargados dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 👇 VERIFICA EL ROL AL CARGAR LA PÁGINA
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const isAdmin = localStorage.getItem('isAdmin');
+            const authToken = localStorage.getItem('authToken'); // Opcional: también verificar token
+
+            // Si no está logueado (no tiene token) o no es admin, redirige
+            if (!authToken || isAdmin !== 'true') { // Recuerda que localStorage guarda strings
+                alert('Acceso denegado. Debes ser administrador para ver esta página.');
+                window.location.href = '../inicio.html'; // Redirige al login
+                return; // Detiene la ejecución del resto del script
+            }
+
+            // Si es admin, la página se carga normalmente
+            console.log("Bienvenido, administrador.");
+            // Puedes cargar datos específicos del admin aquí
+            // 👇 EL RESTO DEL SCRIPT ORIGINAL CONTINÚA AQUÍ
+        });
+
+        // Cambiar pestañas
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+                loadTabData(tab.dataset.tab);
+            });
+        });
+
+        // Cargar datos de la pestaña activa
+        function loadTabData(tabName) {
+            if (tabName === 'usuarios') {
+                loadUsers();
+            } else if (tabName === 'progreso') {
+                loadProgreso();
+            } else if (tabName === 'palabras') {
+                loadPalabras();
+            }
+        }
+
+        // Función genérica de búsqueda
+        function filterTable(tabName) {
+            const input = document.querySelector(`#${tabName} .search-box`);
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById(`${tabName}Table`);
+            const tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td");
+                let found = false;
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        if (td[j].textContent.toUpperCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                tr[i].style.display = found ? "" : "none";
+            }
+        }
+
+        // Cargar usuarios
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin/usuarios');
+                const users = await res.json();
+                const tbody = document.querySelector('#usuariosTable tbody');
+                tbody.innerHTML = users.map(u => `
+                            <tr>
+                                <td>${u.Id}</td>
+                                <td>${u.Email}</td>
+                                <td>${new Date(u.FechaRegistro).toLocaleString()}</td>
+                                <td>
+                                    <button class="action-btn delete-btn" onclick="deleteUser(${u.Id})">Eliminar</button>
+                                </td>
+                            </tr>
+                        `).join('');
+            } catch (error) {
+                console.error('Error al cargar usuarios:', error);
+            }
+        }
+
+        // Cargar progreso
+       
+
+        // Cargar palabras
+        async function loadPalabras() {
+            try {
+                const res = await fetch('/api/admin/palabras');
+                const palabras = await res.json();
+                const tbody = document.querySelector('#palabrasTable tbody');
+                tbody.innerHTML = palabras.map(p => `
+                            <tr>
+                                
+                                <td>${p.Espanol}</td>
+                                <td>${p.Correcta}</td>
+                                <td>
+                                    <button class="action-btn delete-btn" onclick="deletePalabra(${p.Id})">Eliminar</button>
+                                </td>
+                            </tr>
+                        `).join('');
+            } catch (error) {
+                console.error('Error al cargar palabras:', error);
+            }
+        }
+
+        // Eliminar usuario
+        async function deleteUser(id) {
+            if (!confirm('¿Eliminar usuario?')) return;
+            const res = await fetch(`/api/admin/usuarios/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert('Usuario eliminado.');
+                loadUsers();
+            } else {
+                alert('Error al eliminar usuario.');
+            }
+        }
+
+        // Eliminar palabra
+        async function deletePalabra(id) {
+            if (!confirm('¿Eliminar palabra?')) return;
+            const res = await fetch(`/api/admin/palabras/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert('Palabra eliminada.');
+                loadPalabras();
+            } else {
+                alert('Error al eliminar palabra.');
+            }
+        }
+
+        // Iniciar carga de datos
+        // 👇 ESTA PARTE SE MUEVE DENTRO DEL LISTENER DE DOM CONTENT LOADED
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     loadTabData('usuarios');
+        // });
+
+        // 👇 AHORA QUEDA ASÍ:
+        // El código de verificación de rol ya está en el listener de arriba
+        // Iniciar carga de datos solo si es admin
+        loadTabData('usuarios');
+        // Agregar nueva palabra
+        async function agregarPalabra() {
+            const espanol = document.getElementById('inputEspanol').value.trim();
+            const nahuatl = document.getElementById('inputNahuatl').value.trim();
+
+            if (!espanol || !nahuatl) {
+                alert('Por favor ingresa ambas palabras.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/admin/palabras', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Espanol: espanol,
+                        Nahuatl: nahuatl
+                    })
+                });
+
+                if (res.ok) {
+                    alert('✅ Palabra agregada exitosamente.');
+                    document.getElementById('inputEspanol').value = '';
+                    document.getElementById('inputNahuatl').value = '';
+                    loadPalabras(); // Recargar la lista
+                } else {
+                    const error = await res.json().catch(() => ({}));
+                    alert('❌ Error: ' + (error.message || 'No se pudo agregar la palabra.'));
+                }
+            } catch (error) {
+                console.error('Error al agregar palabra:', error);
+                alert('⚠️ Error de conexión con el servidor.');
+            }
+        }
+    </script>
+</body>
+</html>
