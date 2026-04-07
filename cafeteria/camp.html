@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Camper Café Pro: Pide cafés personalizados con carrito, modo oscuro y experiencia premium. Order & Pickup disponible.">
+    <meta name="keywords" content="café, coffee, starbucks, personalizado, pedidos, pickup">
+    <meta name="author" content="Camper Café Pro">
+    <meta property="og:title" content="Camper Café Pro - Experiencia Premium">
+    <meta property="og:description" content="Disfruta de cafés personalizados con carrito, modo oscuro y experiencia premium. ¡Pide y recoge en tienda!">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&h=630&fit=crop">
+    <link rel="canonical" href="https://campercafe.com">
+    <link rel="manifest" href="/manifest.json">
+    <title>Camper Café - Experiencia Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==================== RESET & VARIABLES ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2b4d99;
+            --secondary-color: #8c1a6c;
+            --accent-color: #4781ff;
+            --text-color: #333;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --transition-speed: 0.3s;
+            --skeleton-gradient: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            --toast-success: #4caf50;
+            --toast-error: #f44336;
+            --toast-warning: #ff9800;
+            --toast-info: #2196f3;
+        }
+
+        .dark-mode {
+            --primary-color: #4a6fa5;
+            --secondary-color: #a63a8d;
+            --accent-color: #6495ed;
+            --text-color: #e0e0e0;
+            --background-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --skeleton-gradient: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+        }
+
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            transition: background-color var(--transition-speed) ease;
+        }
+
+        /* ==================== SKIP LINK ==================== */
+        .skip-link {
+            position: absolute;
+            left: -999px;
+            top: 0;
+            background: var(--accent-color);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 1000;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .skip-link:focus {
+            left: 0;
+            top: 0;
+        }
+
+        /* ==================== TOAST NOTIFICATIONS ==================== */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            min-width: 280px;
+            max-width: 350px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+        }
+
+        .toast.success { background-color: var(--toast-success); }
+        .toast.error { background-color: var(--toast-error); }
+        .toast.warning { background-color: var(--toast-warning); }
+        .toast.info { background-color: var(--toast-info); }
+
+        .toast-content {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .toast-undo {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .toast-undo:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* ==================== ANUNCIOS PARA SCREEN READERS ==================== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        [aria-live="polite"] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+        }
+
+        /* ==================== SKELETON LOADER ==================== */
+        .skeleton-loader {
+            background: var(--skeleton-gradient);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 380px;
+        }
+
+        .skeleton-image {
+            height: 200px;
+            background: var(--skeleton-gradient);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+
+        .skeleton-content {
+            padding: 1.5rem;
+        }
+
+        .skeleton-title {
+            height: 24px;
+            width: 70%;
+            margin-bottom: 0.5rem;
+            background: var(--skeleton-gradient);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-price {
+            height: 20px;
+            width: 40%;
+            margin-bottom: 0.5rem;
+            background: var(--skeleton-gradient);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-text {
+            height: 60px;
+            width: 100%;
+            margin-bottom: 1rem;
+            background: var(--skeleton-gradient);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-button {
+            height: 44px;
+            width: 100%;
+            background: var(--skeleton-gradient);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 5px;
+        }
+
+        /* ==================== SPINNER ==================== */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ==================== ENCABEZADO ==================== */
+        .cinépolis-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .menu a.active {
+            color: var(--accent-color);
+        }
+
+        .menu a:hover {
+            color: var(--accent-color);
+        }
+
+        .menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width var(--transition-speed) ease;
+        }
+
+        .menu a:hover::after {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .cart-btn, .theme-toggle, .install-btn, .pickup-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .cart-btn:hover, .theme-toggle:hover, .install-btn:hover, .pickup-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .install-btn, .pickup-btn {
+            background: var(--accent-color);
+        }
+
+        /* ==================== BÚSQUEDA ==================== */
+        .search-container {
+            margin: 1rem 0 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.8rem 1.2rem;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(71, 129, 255, 0.2);
+        }
+
+        /* ==================== CARRUSEL ==================== */
+        .hero-carousel {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            min-height: 500px;
+            overflow: hidden;
+        }
+
+        .carousel-slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .carousel-slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3));
+        }
+
+        .carousel-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        .carousel-content h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .carousel-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 11;
+        }
+
+        .carousel-indicator {
+            width: 40px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .carousel-indicator.active {
+            background-color: white;
+            width: 60px;
+        }
+
+        /* ==================== FILTROS ==================== */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 2px solid var(--border-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-speed) ease;
+            color: var(--text-color);
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        /* ==================== MENÚ ==================== */
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            min-height: 400px;
+        }
+
+        .menu-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all var(--transition-speed) ease;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .menu-card-image {
+            height: 200px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .menu-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .menu-card-image img.error {
+            object-fit: contain;
+            padding: 1rem;
+            background-color: #f0f0f0;
+        }
+
+        .menu-card:hover .menu-card-image img {
+            transform: scale(1.05);
+        }
+
+        .menu-card-content {
+            padding: 1.5rem;
+        }
+
+        .menu-card-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .price {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #c7254e;
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .dark-mode .description {
+            color: #b0b0b0;
+        }
+
+        .stock-info {
+            font-size: 0.9rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .btn-add:hover {
+            background-color: #3a6dce;
+            transform: translateY(-2px);
+        }
+
+        .btn-add:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ==================== QR MODAL ==================== */
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1500;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .qr-code {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .qr-code canvas {
+            width: 200px;
+            height: 200px;
+        }
+
+        .order-id {
+            font-family: monospace;
+            font-size: 1.2rem;
+            background: var(--background-color);
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        .btn-scanner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-social a {
+            display: inline-flex;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .footer-social a:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ==================== MODALES ==================== */
+        .modal, .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            display: flex;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2, .modal-header h3 {
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .close, .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #666;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .close:hover, .btn-close:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .product-image-container {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .product-image-container img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-options {
+            margin: 1.5rem 0;
+        }
+
+        .option-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .option-group h4 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .option-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .option-buttons button {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .option-buttons button.active,
+        .option-buttons button:hover {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .stepper button {
+            background: var(--background-color);
+            border: none;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            color: var(--text-color);
+        }
+
+        .stepper button:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .stepper span {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .total-section {
+            text-align: right;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1rem;
+            color: var(--text-color);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item-info h4 {
+            margin-bottom: 0.3rem;
+            color: var(--text-color);
+        }
+
+        .cart-item-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-quantity {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all var(--transition-speed) ease;
+            color: var(--text-color);
+        }
+
+        .btn-quantity:hover {
+            background-color: var(--accent-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin: 1.5rem 0;
+            padding-top: 1rem;
+            border-top: 2px solid var(--border-color);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .cart-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6bbcff, #249dee);
+            color: white;
+            box-shadow: 0 4px 15px rgba(36, 174, 238, 0.3);
+            
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+            flex: 1;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ==================== PRINT STYLES ==================== */
+        @media print {
+            .cinépolis-header, .footer, .filters, .search-container, .hero-carousel, .cart-actions, .header-actions {
+                display: none !important;
+            }
+            #cartModal {
+                position: static;
+                display: block !important;
+                background: white;
+            }
+            .modal-content {
+                box-shadow: none;
+                max-height: none;
+                background: white;
+                color: black;
+            }
+            .modal {
+                display: block !important;
+                position: static;
+                background: white;
+            }
+            body, .container, .modal-content {
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        /* ==================== ANIMACIONES ==================== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .menu {
+                justify-content: center;
+                gap: 1rem;
+            }
+            
+            .hero-carousel {
+                height: 50vh;
+                min-height: 400px;
+            }
+            
+            .carousel-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .carousel-content p {
+                font-size: 1.1rem;
+            }
+            
+            .carousel-indicator {
+                width: 30px;
+            }
+            
+            .carousel-indicator.active {
+                width: 50px;
+            }
+            
+            .header-actions {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-carousel {
+                min-height: 350px;
+            }
+            
+            .carousel-content h1 {
+                font-size: 1.9rem;
+            }
+            
+            .carousel-content p {
+                font-size: 1rem;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .filter-btn {
+                width: 100%;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+            
+            .cart-actions {
+                flex-direction: column;
+            }
+            
+            .modal-content {
+                width: 95%;
+                border-radius: 12px;
+            }
+            
+            .option-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SKIP LINK PARA ACCESIBILIDAD -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- TOAST CONTAINER PARA NOTIFICACIONES -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- ANUNCIADOR PARA SCREEN READERS -->
+    <div aria-live="polite" id="announcer" class="sr-only"></div>
+
+    <!-- CONSENTIMIENTO GDPR BANNER -->
+    <div id="gdprBanner" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); border-top: 3px solid var(--accent-color); padding: 1rem; z-index: 2000; box-shadow: 0 -4px 12px rgba(0,0,0,0.1);">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <p style="margin: 0;">🍪 Usamos cookies y analytics para mejorar tu experiencia. ¿Aceptas?</p>
+            <div style="display: flex; gap: 0.5rem;">
+                <button id="acceptAnalytics" class="btn-primary" style="padding: 0.5rem 1rem;">Aceptar</button>
+                <button id="declineAnalytics" class="btn-secondary" style="padding: 0.5rem 1rem;">Rechazar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENCABEZADO -->
+    <header class="cinépolis-header">
+        <nav class="container">
+            <div class="logo">☕ Camper Café Pro</div>
+            <ul class="menu">
+                <li><a href="#" class="active">Menú</a></li>
+                <li><a href="#">Promociones</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+            <div class="header-actions">
+                <button id="pickupBtn" class="pickup-btn" aria-label="Order & Pickup">📱 Order & Pickup</button>
+                <button id="installBtn" class="install-btn" style="display: none;" aria-label="Instalar aplicación">📲 Instalar App</button>
+                <button id="cartBtn" class="cart-btn" aria-label="Ver carrito">
+                    🛒 <span id="cartCount">0</span>
+                </button>
+                <button id="darkModeToggle" class="theme-toggle" aria-label="Cambiar modo oscuro">🌙 Modo Oscuro</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- CARRUSEL -->
+    <section class="hero-carousel">
+        <div class="carousel-slides" id="carouselSlides"></div>
+        <div class="carousel-indicators" id="carouselIndicators"></div>
+        <div class="carousel-content">
+            <h1>¡El mejor café para tu experiencia!</h1>
+            <p>Disfruta de nuestros deliciosos cafés y postres elaborados con los mejores ingredientes</p>
+            <button class="btn-primary" onclick="document.getElementById('menuContainer').scrollIntoView({behavior: 'smooth'})">Ver menú</button>
+        </div>
+    </section>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="main-content" class="container">
+        <!-- BÚSQUEDA -->
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar café o postre..." aria-label="Buscar productos">
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-category="all">Todos</button>
+            <button class="filter-btn" data-category="coffee">☕ Café</button>
+            <button class="filter-btn" data-category="desserts">🍰 Postres</button>
+        </div>
+        
+        <div id="loadingSpinner" class="spinner" style="display: none;"></div>
+        <section class="menu-container" id="menuContainer"></section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">☕ Camper Café Pro</div>
+                <div class="footer-links">
+                    <a href="#">Políticas de privacidad</a>
+                    <a href="#">Términos y condiciones</a>
+                    <a href="#">Contacto</a>
+                    <a href="#">Sobre Nosotros</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook">📘</a>
+                    <a href="#" aria-label="Instagram">📷</a>
+                    <a href="#" aria-label="Twitter">🐦</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Camper Café Pro - Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DEL CARRITO -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span class="close" aria-label="Cerrar">&times;</span>
+            <div class="modal-header">
+                <h2>Tu pedido</h2>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems"></div>
+                <div class="cart-total">
+                    <strong>Total:</strong> <span id="cartTotal">$0.00</span>
+                </div>
+            </div>
+            <div class="cart-actions">
+                <button class="btn-secondary" id="continueShoppingBtn">← Seguir comprando</button>
+                <button class="btn-primary" id="checkoutDidiBtn">🛒 Comprar en Didi Food</button>
+                <button class="btn-primary" id="checkoutPickupBtn">📱 Order & Pickup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PERSONALIZACIÓN -->
+    <div id="customizationModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalProductName">Nombre del Producto</h3>
+                <button id="closeCustomModal" class="btn-close" aria-label="Cerrar">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="product-image-container">
+                    <img id="modalProductImage" src="" alt="Producto" loading="lazy" onerror="this.src='https://via.placeholder.com/150?text=Imagen+no+disponible'">
+                </div>
+                <p class="price"><strong>MX$<span id="modalProductPrice">0.00</span></strong></p>
+                <p id="modalProductDesc" class="description"></p>
+                
+                <div class="custom-options">
+                    <div class="option-group">
+                        <h4>Tamaño</h4>
+                        <div class="option-buttons">
+                            <button class="size-btn active" data-size="grande">Grande</button>
+                            <button class="size-btn" data-size="venti">Venti (+MX$5)</button>
+                            <button class="size-btn" data-size="extra-hot">Extra Hot (+MX$10)</button>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <h4>Shots extras</h4>
+                        <div class="option-buttons">
+                            <button class="shot-btn active" data-shot="0">Ninguno</button>
+                            <button class="shot-btn" data-shot="1">+1 Shot (+MX$14)</button>
+                            <button class="shot-btn" data-shot="2">+2 Shots (+MX$28)</button>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <h4>Leche</h4>
+                        <div class="option-buttons">
+                            <button class="milk-btn active" data-milk="normal">Normal</button>
+                            <button class="milk-btn" data-milk="deslactosada">Deslactosada Light</button>
+                            <button class="milk-btn" data-milk="almendra">Bebida de Coco</button>
+                        </div>
+                    </div>
+
+                    <div class="quantity-control">
+                        <label>Cantidad:</label>
+                        <div class="stepper">
+                            <button class="btn-minus" type="button" aria-label="Disminuir cantidad">−</button>
+                            <span id="modalQuantity">1</span>
+                            <button class="btn-plus" type="button" aria-label="Aumentar cantidad">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total-section">
+                    <strong>Total:</strong> <span id="modalTotalPrice">MX$0.00</span>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 1.5rem; text-align: right;">
+                <button id="addToCartBtn" class="btn-primary">Agregar al carrito</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL QR PARA ORDER & PICKUP -->
+    <div id="qrModal" class="qr-modal">
+        <div class="qr-modal-content">
+            <button id="closeQrModal" style="float: right; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h3>¡Pedido listo para recoger!</h3>
+            <p>Presenta este código QR en la tienda</p>
+            <div class="qr-code" id="qrCode"></div>
+            <div class="order-id">
+                <strong>ID de orden:</strong><br>
+                <span id="orderIdDisplay"></span>
+            </div>
+            <p style="font-size: 0.8rem; color: #666;">El código expira en 30 minutos</p>
+            <button id="copyOrderId" class="btn-secondary">📋 Copiar ID</button>
+            <button id="openScannerBtn" class="btn-scanner">📷 Escanear QR (POS)</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs2-fix@0.0.1/qrcode.min.js"></script>
+    <script>
+        // ==================== DATOS DE PRODUCTOS ====================
+        const menuItems = [
+            { id: 1, name: "Cold Brew", price: 104.00, description: "Café filtrado en frío por más de 20 horas con un toque dulce (grande 60 kcal), (venti 80 kcal).", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_f7c5baeb162aeffea65601485aa5b947.jpg", stock: 10 },
+            { id: 2, name: "Cajeta Latte", price: 112.00, description: "Mezcla de nuestro café espresso con leche vaporizada, con una salsa de cajeta y coronado con una rejilla de caramelo.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_5fa141e8eb72d1e041b20eb79a7c3887.png", stock: 10 },
+            { id: 3, name: "Mocha Blanco", price: 104.00, description: "Nuestro característico espresso se combina con salsa de chocolate blanco, leche al vapor y crean esta delicia suprema de chocolate blanco.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_5fa141e8eb72d1e041b20eb79a7c3887.png", stock: 10 },
+            { id: 4, name: "Chocolate Cream Frappuccino®", price: 112.00, description: "Frappuccino® base leche, mezclado con salsa de mocha y molido con hielo.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_312c510ace8bbcb60bc695d502d42ea8.jpg", stock: 10 },
+            { id: 5, name: "Cajeta Frappuccino®", price: 112.00, description: "Nuestro delicioso Frappuccino® Roast con salsa de cajeta, molido con leche fría y hielos.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_9f0cdefff0a1fdeb9eef88b9d0d90f08.jpg", stock: 10 },
+            { id: 6, name: "Frappuccino® para Dos", price: 224.00, description: "Disfruta de dos Frappuccinos® a un precio especial.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_d84f5ece18ea1a5db5f0be9b71464b11.jpg", stock: 10 },
+            { id: 7, name: "Cupido Frappuccino®", price: 124.00, description: "Deliciosa mezcla de té negro con canela y clavo entre otros ingredientes.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_94c7e91e1ac254bfd8cc3e13d6c664f4.jpg", stock: 10 },
+            { id: 8, name: "Frappuccino® más Cake pop", price: 159.00, description: "Elige un cake pop vainilla o chocolate más un Frappuccino® a un precio especial.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_811f0379b0ae205265e547053221bdea.jpg", stock: 10 },
+            { id: 9, name: "Helado Chai Latte + Shot Espresso", price: 124.00, description: "Deliciosa mezcla de té negro con canela y clavo entre otros ingredientes.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_39a9a049a8fb3206ea697ba17043aa1d.jpg", stock: 10 },
+            { id: 10, name: "Skies Pearls Drink", price: 124.00, description: "Explosión de sabores tropicales con perlas de tapioca.", category: "coffee", image: "https://img0.didiglobal.com/static/soda_public/img_b7f16c42087a2f6cdc3737818d3fab67.jpg", stock: 10 },
+            { id: 11, name: "Pastel con Café del Día", price: 149.00, description: "Pastel con Café del Día", category: "desserts", image: "https://img0.didiglobal.com/static/soda_public/img_38bf964d160e6db21d360887f0293388.jpg", stock: 10 },
+            { id: 12, name: "Power Lunch", price: 149.00, description: "Disfruta de tú Café del Día o Espresso Americano y complementalo con un sandwich.", category: "desserts", image: "https://img0.didiglobal.com/static/soda_public/img_9f0cdefff0a1fdeb9eef88b9d0d90f08.jpg", stock: 10 },
+            { id: 13, name: "Trenza de chocolate", price: 85.00, description: "Deliciosa trenza de chocolate recién horneada.", category: "desserts", image: "https://img0.didiglobal.com/static/soda_public/img_cb014fa113e3f47d54d3a681f320ddec.jpg", stock: 10 },
+            { id: 14, name: "Cheesecake Brulee de Frambuesa", price: 99.00, description: "Postre cremoso con toque ácido de frambuesa.", category: "desserts", image: "https://img0.didiglobal.com/static/soda_public/img_060538de16290eb00f5433ef2366db92.jpg", stock: 10 }
+        ];
+
+        // ==================== ESTADO GLOBAL ====================
+        let cart = [];
+        let currentProduct = null;
+        let selectedSize = 'grande';
+        let selectedShots = 0;
+        let selectedMilk = 'normal';
+        let quantity = 1;
+        let currentCategory = 'all';
+        let currentSearchTerm = '';
+        let focusableElements = [];
+        let pendingRemovals = new Map();
+        let analyticsConsent = null;
+
+        // ==================== GDPR CONSENT ====================
+        function initGDPRConsent() {
+            const consent = localStorage.getItem('analyticsConsent');
+            if (consent === null) {
+                document.getElementById('gdprBanner').style.display = 'block';
+            } else {
+                analyticsConsent = consent === 'true';
+            }
+        }
+
+        document.getElementById('acceptAnalytics')?.addEventListener('click', () => {
+            localStorage.setItem('analyticsConsent', 'true');
+            analyticsConsent = true;
+            document.getElementById('gdprBanner').style.display = 'none';
+            trackEvent('analytics_consent', { accepted: true });
+            showToast('¡Gracias por ayudarnos a mejorar!', 'success');
+        });
+
+        document.getElementById('declineAnalytics')?.addEventListener('click', () => {
+            localStorage.setItem('analyticsConsent', 'false');
+            analyticsConsent = false;
+            document.getElementById('gdprBanner').style.display = 'none';
+            showToast('Analytics desactivados', 'info');
+        });
+
+        // ==================== TOAST NOTIFICATIONS ====================
+        function showToast(message, type = 'info', undoCallback = null, undoData = null) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const content = document.createElement('div');
+            content.className = 'toast-content';
+            content.textContent = message;
+            
+            toast.appendChild(content);
+            
+            if (undoCallback) {
+                const undoBtn = document.createElement('button');
+                undoBtn.className = 'toast-undo';
+                undoBtn.textContent = 'Deshacer';
+                undoBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    undoCallback(undoData);
+                    toast.remove();
+                };
+                toast.appendChild(undoBtn);
+            }
+            
+            toast.onclick = (e) => {
+                if (e.target !== undoBtn) {
+                    toast.remove();
+                }
+            };
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 3000);
+        }
+
+        // ==================== ANALYTICS SIMULADO ====================
+        function trackEvent(eventName, data) {
+            if (analyticsConsent !== null && !analyticsConsent) return;
+            console.log(`[Analytics] ${eventName}`, {
+                ...data,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            });
+        }
+
+        // ==================== VALIDACIÓN DE PRECIOS CON BACKEND SIMULADO ====================
+        async function validarPrecioEnServidor(product, size, shots, milk, qty) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const precioCalculado = calcularTotal(product, size, shots, milk, qty);
+                    const precioEsperado = (product.price + 
+                        (shots > 0 ? shots * 14 : 0) +
+                        (size === 'venti' ? 5 : size === 'extra-hot' ? 10 : 0)) * qty;
+                    
+                    const esValido = Math.abs(precioCalculado - precioEsperado) < 0.01;
+                    
+                    resolve({ 
+                        valido: esValido, 
+                        precio: precioCalculado,
+                        mensaje: esValido ? 'Precio validado' : 'Inconsistencia detectada en el precio'
+                    });
+                }, 300);
+            });
+        }
+
+        // ==================== ORDER & PICKUP ====================
+        function generateOrderId() {
+            const timestamp = Date.now().toString(36).toUpperCase();
+            const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+            return `ORD-${timestamp}-${random}`;
+        }
+
+        function saveOrder(order) {
+            const orders = JSON.parse(localStorage.getItem('camperCafeOrders') || '[]');
+            orders.push(order);
+
+            localStorage.setItem('camperCafeOrders', JSON.stringify(orders));
+            
+            if (typeof BroadcastChannel !== 'undefined') {
+                try {
+                    const channel = new BroadcastChannel('camper-cafe-channel');
+                    channel.postMessage({ 
+                        type: 'NEW_ORDER', 
+                        order: order,
+                        timestamp: Date.now()
+                    });
+                    channel.close(); // ✅ Cerrar después de enviar
+                } catch (e) {
+                    console.warn('BroadcastChannel error:', e);
+                }
+            }
+            
+            
+            
+            // Expiración automática después de 30 minutos
+            setTimeout(() => {
+                const currentOrders = JSON.parse(localStorage.getItem('camperCafeOrders') || '[]');
+                const index = currentOrders.findIndex(o => o.id === order.id);
+                if (index !== -1 && currentOrders[index].estado !== 'entregado') {
+                    currentOrders.splice(index, 1);
+                    localStorage.setItem('camperCafeOrders', JSON.stringify(currentOrders));
+                    console.log(`Order ${order.id} expired`);
+                }
+            }, 30 * 60 * 1000);
+        }
+
+        function createPickupOrder() {
+            if (cart.length === 0) {
+                showToast('Tu carrito está vacío. Agrega productos primero', 'warning');
+                return;
+            }
+
+            const orderId = generateOrderId();
+            const total = cart.reduce((sum, item) => sum + calcularTotal(item, item.size, item.shots, item.milk, item.quantity), 0);
+            
+            const order = {
+                id: orderId,
+                items: cart.map(item => ({
+                    ...item,
+                    validatedPrice: calcularTotal(item, item.size, item.shots, item.milk, item.quantity)
+                })),
+                total: total,
+                timestamp: new Date().toISOString(),
+                estado: 'pendiente',  
+                tipo: 'pickup',
+                notas: ''
+            };
+            
+            saveOrder(order);
+            
+            // Mostrar QR
+            const qrModal = document.getElementById('qrModal');
+            const orderIdDisplay = document.getElementById('orderIdDisplay');
+            const qrCodeDiv = document.getElementById('qrCode');
+            
+            orderIdDisplay.textContent = orderId;
+            qrCodeDiv.innerHTML = '';
+            
+            // Generar QR con solo el ID (para compatibilidad)
+            new QRCode(qrCodeDiv, {
+                text: orderId,
+                width: 200,
+                height: 200
+            });
+            
+            qrModal.style.display = 'flex';
+            
+            // Limpiar carrito
+            cart = [];
+            updateCartUI();
+            updateCartModal();
+            
+            trackEvent('order_created', { order_id: orderId, total: total, items_count: order.items.length });
+            showToast('¡Pedido creado! Presenta el QR en tienda', 'success');
+        }
+
+        // ==================== KEYBOARD SHORTCUTS ====================
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+K para buscar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput')?.focus();
+                showToast('Búsqueda activada', 'info');
+            }
+            // Escape para cerrar modales
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal, .modal-overlay.show, .qr-modal[style*="flex"]');
+                modals.forEach(modal => {
+                    if (modal.style.display === 'flex' || modal.classList.contains('show')) {
+                        modal.style.display = 'none';
+                        modal.classList.remove('show');
+                    }
+                });
+            }
+        });
+
+        // ==================== FUNCIONES DEL CARRITO ====================
+        function calcularTotal(product, size, shots, milk, qty) {
+            const basePrice = product.price;
+            let extraCost = 0;
+            if (shots > 0) extraCost += shots * 14;
+            if (size === 'venti') extraCost += 5;
+            if (size === 'extra-hot') extraCost += 10;
+            return (basePrice + extraCost) * qty;
+        }
+
+        function saveCartToLocalStorage() {
+            try {
+                localStorage.setItem('camperCafeCart', JSON.stringify(cart));
+            } catch (error) {
+                showToast('Error al guardar el carrito', 'error');
+            }
+        }
+
+        function loadCartFromLocalStorage() {
+            try {
+                const savedCart = localStorage.getItem('camperCafeCart');
+                if (savedCart) {
+                    cart = JSON.parse(savedCart);
+                    updateCartUI();
+                }
+            } catch (error) {
+                cart = [];
+            }
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) cartCount.textContent = totalItems;
+            saveCartToLocalStorage();
+        }
+
+        function updateCartModal() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartTotalSpan = document.getElementById('cartTotal');
+            if (!cartItemsContainer) return;
+            
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p style="text-align: center;">Tu carrito está vacío</p>';
+                if (cartTotalSpan) cartTotalSpan.textContent = '$0.00';
+                return;
+            }
+            
+            let total = 0;
+            cart.forEach(item => {
+                const itemTotal = calcularTotal(item, item.size, item.shots, item.milk, item.quantity);
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <h4>${escapeHtml(item.name)}</h4>
+                        <p>${item.size || 'Grande'} • ${item.shots > 0 ? `+${item.shots} shot${item.shots > 1 ? 's' : ''}` : 'Sin extra'} • ${item.milk === 'normal' ? 'Leche normal' : item.milk === 'deslactosada' ? 'Deslactosada Light' : 'Bebida de Coco'}</p>
+                        <p>MX$${item.price.toFixed(2)} x ${item.quantity}</p>
+                    </div>
+                    <div class="cart-item-actions">
+                        <button class="btn-quantity" data-id="${item.id}" data-action="decrease" data-size="${item.size || ''}" data-shots="${item.shots || 0}" data-milk="${item.milk || ''}">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="btn-quantity" data-id="${item.id}" data-action="increase" data-size="${item.size || ''}" data-shots="${item.shots || 0}" data-milk="${item.milk || ''}">+</button>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+            
+            if (cartTotalSpan) cartTotalSpan.textContent = `MX$${total.toFixed(2)}`;
+            
+            document.querySelectorAll('.btn-quantity').forEach(btn => {
+                btn.addEventListener('click', handleQuantityChange);
+            });
+        }
+
+        async function handleQuantityChange(e) {
+            const productId = parseInt(e.target.dataset.id);
+            const action = e.target.dataset.action;
+            const size = e.target.dataset.size || null;
+            const shots = parseInt(e.target.dataset.shots) || 0;
+            const milk = e.target.dataset.milk || null;
+            
+            const itemIndex = cart.findIndex(i => 
+                i.id === productId && 
+                i.size === size && 
+                i.shots === shots && 
+                i.milk === milk
+            );
+            
+            if (itemIndex !== -1) {
+                if (action === 'increase') {
+                    cart[itemIndex].quantity++;
+                    showToast(`${cart[itemIndex].name} cantidad aumentada`, 'success');
+                } else if (action === 'decrease') {
+                    if (cart[itemIndex].quantity > 1) {
+                        cart[itemIndex].quantity--;
+                        showToast(`${cart[itemIndex].name} cantidad disminuida`, 'info');
+                    } else {
+                        const removedItem = { ...cart[itemIndex] };
+                        cart.splice(itemIndex, 1);
+                        showToast(`${removedItem.name} eliminado`, 'warning', (data) => {
+                            cart.push(data);
+                            updateCartUI();
+                            updateCartModal();
+                            showToast(`${data.name} restaurado`, 'success');
+                        }, removedItem);
+                    }
+                }
+                updateCartUI();
+                updateCartModal();
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // ==================== FUNCIONES DEL MENÚ ====================
+        function renderMenu(category = currentCategory, searchTerm = currentSearchTerm) {
+            const container = document.getElementById('menuContainer');
+            if (!container) return;
+            
+            let filteredItems = category === 'all' ? [...menuItems] : menuItems.filter(item => item.category === category);
+            
+            if (searchTerm) {
+                filteredItems = filteredItems.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.description.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            container.innerHTML = '';
+            
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No se encontraron productos</p>';
+                return;
+            }
+            
+            filteredItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'menu-card';
+                card.innerHTML = `
+                    <div class="menu-card-image" data-product-id="${item.id}">
+                        <img src="${item.image}" alt="${escapeHtml(item.name)}" loading="lazy" srcset="${item.image}?w=400 400w, ${item.image}?w=800 800w" sizes="(max-width: 768px) 400px, 800px" onerror="this.src='https://via.placeholder.com/300x200?text=Imagen+no+disponible'">
+                    </div>
+                    <div class="menu-card-content">
+                        <h3>${escapeHtml(item.name)}</h3>
+                        <p class="price">MX$${item.price.toFixed(2)}</p>
+                        <p class="description">${escapeHtml(item.description.substring(0, 80))}${item.description.length > 80 ? '...' : ''}</p>
+                        <div class="stock-info">Stock: ${item.stock}</div>
+                        <button class="btn-add" data-id="${item.id}" ${item.stock <= 0 ? 'disabled' : ''}>${item.stock > 0 ? 'Agregar al carrito' : 'Sin stock'}</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            document.querySelectorAll('.menu-card-image').forEach(img => {
+                img.addEventListener('click', () => {
+                    const productId = parseInt(img.dataset.productId);
+                    const product = menuItems.find(p => p.id === productId);
+                    if (product && product.category === 'coffee' && product.stock > 0) {
+                        openCustomizationModal(product);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.btn-add').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const productId = parseInt(btn.dataset.id);
+                    const product = menuItems.find(p => p.id === productId);
+                    if (product) {
+                        if (product.category === 'desserts') {
+                            addToCartDirect(product);
+                        } else if (product.stock > 0) {
+                            openCustomizationModal(product);
+                        }
+                    }
+                });
+            });
+        }
+
+        async function addToCartDirect(product) {
+            if (product.stock <= 0) {
+                showToast('Producto sin stock', 'error');
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.id === product.id && !item.size);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+                showToast(`${product.name} cantidad aumentada`, 'success');
+            } else {
+                cart.push({ ...product, quantity: 1, size: null, shots: 0, milk: null });
+                showToast(`${product.name} añadido al carrito`, 'success');
+            }
+            
+            product.stock--;
+            updateCartUI();
+            updateCartModal();
+            trackEvent('add_to_cart', { product_id: product.id, product_name: product.name });
+        }
+
+        // ==================== MODAL DE PERSONALIZACIÓN ====================
+        function openCustomizationModal(product) {
+            currentProduct = product;
+            selectedSize = 'grande';
+            selectedShots = 0;
+            selectedMilk = 'normal';
+            quantity = 1;
+            
+            document.getElementById('modalProductName').textContent = product.name;
+            document.getElementById('modalProductPrice').textContent = product.price.toFixed(2);
+            document.getElementById('modalProductDesc').textContent = product.description;
+            document.getElementById('modalProductImage').src = product.image;
+            document.getElementById('modalQuantity').textContent = quantity;
+            
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.size === 'grande');
+            });
+            document.querySelectorAll('.shot-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.shot === '0');
+            });
+            document.querySelectorAll('.milk-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.milk === 'normal');
+            });
+            
+            updateModalTotal();
+            document.getElementById('customizationModal').classList.add('show');
+        }
+
+        function updateModalTotal() {
+            if (!currentProduct) return;
+            const total = calcularTotal(currentProduct, selectedSize, selectedShots, selectedMilk, quantity);
+            document.getElementById('modalTotalPrice').textContent = `MX$${total.toFixed(2)}`;
+        }
+
+        async function addToCartFromModal() {
+            if (!currentProduct || currentProduct.stock <= 0) {
+                showToast('Producto sin stock', 'error');
+                return;
+            }
+            
+            const validacion = await validarPrecioEnServidor(currentProduct, selectedSize, selectedShots, selectedMilk, quantity);
+            if (!validacion.valido) {
+                showToast(validacion.mensaje, 'error');
+                return;
+            }
+            
+            const item = {
+                ...currentProduct,
+                size: selectedSize,
+                shots: selectedShots,
+                milk: selectedMilk,
+                quantity: quantity
+            };
+            
+            const existingItem = cart.find(c => c.id === item.id && c.size === item.size && c.shots === item.shots && c.milk === item.milk);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+                showToast(`${item.name} cantidad aumentada`, 'success');
+            } else {
+                cart.push(item);
+                showToast(`${item.name} añadido al carrito`, 'success');
+            }
+            
+            currentProduct.stock -= quantity;
+            updateCartUI();
+            updateCartModal();
+            
+            document.getElementById('customizationModal').classList.remove('show');
+            trackEvent('add_to_cart_customized', { product_id: item.id, size: selectedSize, shots: selectedShots });
+        }
+
+        // ==================== CARRUSEL ====================
+        const carouselImages = [
+            "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1920&q=80"
+        ];
+        
+        let currentSlide = 0;
+        let carouselInterval;
+        
+        function initCarousel() {
+            const slidesContainer = document.getElementById('carouselSlides');
+            const indicatorsContainer = document.getElementById('carouselIndicators');
+            if (!slidesContainer || !indicatorsContainer) return;
+            
+            slidesContainer.innerHTML = '';
+            indicatorsContainer.innerHTML = '';
+            
+            carouselImages.forEach((src, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+                slide.innerHTML = `<img src="${src}" alt="Slide ${index + 1}" loading="lazy" srcset="${src}?w=800 800w, ${src}?w=1200 1200w" sizes="100vw">`;
+                slidesContainer.appendChild(slide);
+                
+                const indicator = document.createElement('div');
+                indicator.className = 'carousel-indicator';
+                if (index === 0) indicator.classList.add('active');
+                indicator.addEventListener('click', () => goToSlide(index));
+                indicatorsContainer.appendChild(indicator);
+            });
+            
+            startCarousel();
+        }
+        
+        function startCarousel() {
+            if (carouselInterval) clearInterval(carouselInterval);
+            carouselInterval = setInterval(nextSlide, 5000);
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % carouselImages.length;
+            updateCarousel();
+        }
+        
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+            startCarousel();
+        }
+        
+        function updateCarousel() {
+            const slidesContainer = document.getElementById('carouselSlides');
+            if (slidesContainer) {
+                slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+            document.querySelectorAll('.carousel-indicator').forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // ==================== PWA ====================
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'flex';
+            
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        showToast('¡Gracias por instalar nuestra app!', 'success');
+                    }
+                    deferredPrompt = null;
+                    installBtn.style.display = 'none';
+                }
+            });
+        });
+
+        // ==================== EVENT LISTENERS ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            initGDPRConsent();
+            loadCartFromLocalStorage();
+            renderMenu();
+            updateCartModal();
+            initCarousel();
+            
+            // Búsqueda con debounce
+            let searchTimeout;
+            document.getElementById('searchInput')?.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    currentSearchTerm = e.target.value;
+                    renderMenu(currentCategory, currentSearchTerm);
+                }, 300);
+            });
+            
+            // Filtros
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentCategory = btn.dataset.category;
+                    renderMenu(currentCategory, currentSearchTerm);
+                });
+            });
+            
+            // Modales
+            const cartBtn = document.getElementById('cartBtn');
+            const cartModal = document.getElementById('cartModal');
+            const closeModal = document.querySelector('.close');
+            const continueShoppingBtn = document.getElementById('continueShoppingBtn');
+            
+            cartBtn?.addEventListener('click', () => {
+                updateCartModal();
+                cartModal.style.display = 'flex';
+            });
+            
+            closeModal?.addEventListener('click', () => cartModal.style.display = 'none');
+            continueShoppingBtn?.addEventListener('click', () => cartModal.style.display = 'none');
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === cartModal) cartModal.style.display = 'none';
+                if (e.target === document.getElementById('customizationModal')) {
+                    document.getElementById('customizationModal').classList.remove('show');
+                }
+                if (e.target === document.getElementById('qrModal')) {
+                    document.getElementById('qrModal').style.display = 'none';
+                }
+            });
+            
+            // Personalización
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedSize = btn.dataset.size;
+                    updateModalTotal();
+                });
+            });
+            
+            document.querySelectorAll('.shot-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.shot-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedShots = parseInt(btn.dataset.shot);
+                    updateModalTotal();
+                });
+            });
+            
+            document.querySelectorAll('.milk-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.milk-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedMilk = btn.dataset.milk;
+                    updateModalTotal();
+                });
+            });
+            
+            document.querySelector('.btn-plus')?.addEventListener('click', () => {
+                quantity++;
+                document.getElementById('modalQuantity').textContent = quantity;
+                updateModalTotal();
+            });
+            
+            document.querySelector('.btn-minus')?.addEventListener('click', () => {
+                if (quantity > 1) {
+                    quantity--;
+                    document.getElementById('modalQuantity').textContent = quantity;
+                    updateModalTotal();
+                }
+            });
+            
+            document.getElementById('addToCartBtn')?.addEventListener('click', addToCartFromModal);
+            document.getElementById('closeCustomModal')?.addEventListener('click', () => {
+                document.getElementById('customizationModal').classList.remove('show');
+            });
+            
+            // Order & Pickup
+            document.getElementById('pickupBtn')?.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    showToast('Agrega productos al carrito primero', 'warning');
+                } else {
+                    createPickupOrder();
+                }
+            });
+            
+            document.getElementById('checkoutPickupBtn')?.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    showToast('Agrega productos al carrito primero', 'warning');
+                } else {
+                    createPickupOrder();
+                }
+                cartModal.style.display = 'none';
+            });
+            
+            document.getElementById('closeQrModal')?.addEventListener('click', () => {
+                document.getElementById('qrModal').style.display = 'none';
+            });
+            
+            document.getElementById('copyOrderId')?.addEventListener('click', () => {
+                const orderId = document.getElementById('orderIdDisplay').textContent;
+                navigator.clipboard.writeText(orderId);
+                showToast('ID de orden copiado', 'success');
+            });
+
+            document.getElementById('openScannerBtn')?.addEventListener('click', () => {
+                window.location.href = 'scanner.html';
+            });
+            
+            document.getElementById('checkoutDidiBtn')?.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    showToast('Carrito vacío', 'warning');
+                    return;
+                }
+                localStorage.setItem('camperCafeCart', JSON.stringify(cart));
+                window.open('https://web.didiglobal.com/mx/food/ciudad-de-mexico-cdmx/starbucks-montevideo/5764607774726815999/', '_blank');
+                showToast('Pedido guardado para Didi Food', 'success');
+            });
+            
+            // Dark Mode
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
+            if (darkModeEnabled) {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.textContent = '☀️ Modo Claro';
+            }
+            
+            darkModeToggle?.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                localStorage.setItem('darkMode', isDarkMode);
+                darkModeToggle.textContent = isDarkMode ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
+            });
+            
+            trackEvent('page_view', { page: 'menu' });
+        });
+    </script>
+</body>
+</html>
