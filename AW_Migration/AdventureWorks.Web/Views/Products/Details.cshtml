@@ -1,0 +1,63 @@
+@model AdventureWorks.Web.Models.Domain.Product
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Back to Products
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">@Model.Name</h4>
+        <small><code>@Model.ProductNumber</code></small>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-5">Category</dt>
+                    <dd class="col-sm-7">@(Model.Subcategory?.Category?.Name ?? "—")</dd>
+
+                    <dt class="col-sm-5">Subcategory</dt>
+                    <dd class="col-sm-7">@(Model.Subcategory?.Name ?? "—")</dd>
+
+                    <dt class="col-sm-5">Color</dt>
+                    <dd class="col-sm-7">
+                        @if (!string.IsNullOrEmpty(Model.Color))
+                        { <span class="badge bg-secondary">@Model.Color</span> }
+                        else { <span class="text-muted">N/A</span> }
+                    </dd>
+
+                    <dt class="col-sm-5">Size</dt>
+                    <dd class="col-sm-7">@(Model.Size ?? "—")</dd>
+
+                    <dt class="col-sm-5">Weight</dt>
+                    <dd class="col-sm-7">@(Model.Weight.HasValue ? $"{Model.Weight:F2} kg" : "—")</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-5">List Price</dt>
+                    <dd class="col-sm-7 fw-bold text-success">
+                        @(Model.ListPrice > 0 ? Model.ListPrice.ToString("C") : "—")
+                    </dd>
+
+                    <dt class="col-sm-5">Standard Cost</dt>
+                    <dd class="col-sm-7">@Model.StandardCost.ToString("C")</dd>
+
+                    <dt class="col-sm-5">Product Line</dt>
+                    <dd class="col-sm-7">@(Model.ProductLine ?? "—")</dd>
+
+                    <dt class="col-sm-5">Style</dt>
+                    <dd class="col-sm-7">@(Model.Style ?? "—")</dd>
+
+                    <dt class="col-sm-5">Sell Start</dt>
+                    <dd class="col-sm-7">@Model.SellStartDate.ToString("yyyy-MM-dd")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
