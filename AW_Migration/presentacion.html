@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../bootstrap.min.css">
+  <link rel="stylesheet" href="../style.css">
+  <title>AdventureWorks E-commerce | Stefany Mazas</title>
+  
+  <style>
+    :root {
+      --bg: #1F2024;
+      --text: #e2e8f0;
+      --accent: #512bd4;
+      --accent2: #c41230;
+      --card: #1e1e2e;
+      --border: #334155;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --accent: #512bd4;
+      --accent2: #c41230;
+      --card: #ffffff;
+      --border: #cbd5e1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Roboto Mono', monospace !important;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .hero-section {
+      padding: 4rem 2rem;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(81, 43, 212, 0.1), rgba(196, 18, 48, 0.1));
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    .tech-badges {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .tech-badge {
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-dotnet { background: #512bd4; color: white; }
+    .badge-angular { background: #dd0031; color: white; }
+    .badge-ef { background: #c41230; color: white; }
+    .badge-sql { background: #cc2927; color: white; }
+    .badge-ts { background: #3178c6; color: white; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .code-block {
+      background: #0d1117;
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .code-block pre {
+      color: #e6edf3;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      border: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px -10px rgba(81, 43, 212, 0.5);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      transition: color 0.3s;
+    }
+
+    .back-link:hover {
+      color: var(--accent);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .hero-section { padding: 2rem 1rem; }
+      .container { padding: 1rem; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="hero-section">
+    <a href=".." class="back-link">← Volver al Portafolio</a>
+    
+    <h1 class="hero-title">AdventureWorks E-commerce</h1>
+    <p class="hero-subtitle">Migración completa de ASP.NET MVC 4 a .NET 8 con Angular 21. Aplicación full stack con API REST, Entity Framework Core, SQL Server y autenticación.</p>
+    
+    <div class="tech-badges">
+      <span class="tech-badge badge-dotnet">.NET 8</span>
+      <span class="tech-badge badge-angular">Angular 21</span>
+      <span class="tech-badge badge-ef">EF Core</span>
+      <span class="tech-badge badge-sql">SQL Server</span>
+      <span class="tech-badge badge-ts">TypeScript</span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">37</div>
+        <div class="stat-label">Tests Unitarios</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">2</div>
+        <div class="stat-label">Frontends</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5</div>
+        <div class="stat-label">Controladores</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">1000+</div>
+        <div class="stat-label">Líneas Docs</div>
+      </div>
+    </div>
+
+    <div class="cta-buttons">
+      <a href="https://github.com/Stefany-Mazas/portafolio/tree/main/AW_Migration" class="btn btn-primary" target="_blank">
+        📂 Ver Código
+      </a>
+      <a href="#" class="btn btn-secondary">
+        🚀 Ver Demo
+      </a>
+    </div>
+  </div>
+
+  <div class="container">
+    <section class="section">
+      <h2 class="section-title">✨ Características Principales</h2>
+      
+      <div class="features-grid">
+        <article class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3 class="feature-title">API REST Completa</h3>
+          <p class="feature-desc">Endpoints para productos, categorías, autenticación y administración. Serialización con System.Text.Json.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3 class="feature-title">Autenticación Segura</h3>
+          <p class="feature-desc">ASP.NET Core Identity con Cookie Auth. Roles: Administrator y Customer. Políticas de autorización.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🗄️</div>
+          <h3 class="feature-title">Entity Framework Core</h3>
+          <p class="feature-desc">Migrations, consultas LINQ, relaciones, soft delete. SQL Server 2022.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3 class="feature-title">Frontend SPA</h3>
+          <p class="feature-desc">Angular 21 con Signals, Standalone Components, Control Flow moderno. Bootstrap 5.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🧪</div>
+          <h3 class="feature-title">Testing</h3>
+          <p class="feature-desc">xUnit con Moq para backend. Vitest para Angular. 37 tests pasando.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">⚙️</div>
+          <h3 class="feature-title">CI/CD</h3>
+          <p class="feature-desc">GitHub Actions: build, test,部署automático. Validación en cada push.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">💻 Ejemplo de Código</h2>
+      
+      <h3 style="margin: 1rem 0; font-size: 1rem;">ProductService - Paginación con EF Core</h3>
+      <div class="code-block">
+<pre>public async Task<(IEnumerable<Product> Items, int TotalCount)> GetPagedAsync(
+    int page, int pageSize, string? search = null, int? categoryId = null)
+{
+    var query = _db.Set<Product>()
+        .Include(p => p.Subcategory).ThenInclude(s => s!.Category)
+        .Where(p => p.SellEndDate == null && p.DiscontinuedDate == null)
+        .AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(search))
+        query = query.Where(p => p.Name.Contains(search));
+
+    var total = await query.CountAsync();
+    var items = await query.OrderBy(p => p.Name)
+                       .Skip((page - 1) * pageSize)
+                       .Take(pageSize)
+                       .ToListAsync();
+    return (items, total);
+}</pre>
+      </div>
+
+      <h3 style="margin: 1rem 0; font-size: 1rem;">Angular - Signal para estado</h3>
+      <div class="code-block">
+<pre>// Estado reactivo con signals
+result = signal<PagedResult<Product> | null>(null);
+loading = signal(false);
+error = signal<string | null>(null);
+
+// Computed - recalcula automáticamente
+totalPages = computed(() => this.result()?.totalPages ?? 0);</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">🏗️ Arquitectura</h2>
+      
+      <div class="features-grid">
+        <article class="feature-card">
+          <div class="feature-icon">📐</div>
+          <h3 class="feature-title">Patrón Repository</h3>
+          <p class="feature-desc">IProductService + ProductService. Inyección de dependencias. Testing aislado.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🔀</div>
+          <h3 class="feature-title">Dual API</h3>
+          <p class="feature-desc">ProductsController (MVC) + ProductsApiController (REST). Mismo servicio compartido.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3 class="feature-title">DTOs</h3>
+          <p class="feature-desc">ProductDto para respuesta API. ViewModels para MVC. Serialización correcta.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🗑️</div>
+          <h3 class="feature-title">Soft Delete</h3>
+          <p class="feature-desc">Campo DiscontinuedDate. Mantiene integridad referencial con órdenes.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">📚 Documentación</h2>
+      
+      <p>El proyecto incluye documentación completa en Markdown:</p>
+      <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+        <li><strong>README.md</strong> - Descripción, configuración, cómo ejecutar (1000+ líneas)</li>
+        <li><strong>MIGRATION.md</strong> - Pasos de la migración de MVC 4 a Core 8</li>
+        <li><strong>ADR.md</strong> - Architecture Decision Records</li>
+        <li><strong>QUERY_OPTIMIZATION.md</strong> - Ejemplos de optimización de consultas</li>
+        <li><strong>BITACORA.md</strong> - Registro de decisiones técnicas</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">🎯 Lo que este Proyecto Demuestra</h2>
+      
+      <p>Este proyecto fue desarrollado para demostrar:</p>
+      <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+        <li>✅ Migración real de ASP.NET Framework a .NET 8</li>
+        <li>✅ Entity Framework Core con SQL Server</li>
+        <li>✅ Angular 21 moderno (Signals, Standalone, Control Flow)</li>
+        <li>✅ Autenticación y autorización con Identity</li>
+        <li>✅ Testing con xUnit y Vitest</li>
+        <li>✅ CI/CD con GitHub Actions</li>
+        <li>✅ Documentación técnica profesional</li>
+        <li>✅ Revisión de código generado por IA</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer>
+    <p>💜 Desarrollado por Stefany Mazas | Abril 2026</p>
+    <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+      <a href="https://github.com/Stefany-Mazas" style="color: var(--accent);">GitHub</a> | 
+      <a href="mailto:Stefanymazas@gmail.com" style="color: var(--accent);">Email</a>
+    </p>
+  </footer>
+
+</body>
+</html>
