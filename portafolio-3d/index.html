@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../bootstrap.min.css">
+  <link rel="stylesheet" href="../style.css">
+  <title>Portafolio 3D Interactivo | Stefany Mazas</title>
+  
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --text: #e2e8f0;
+      --accent: #8b5cf6;
+      --accent2: #06b6d4;
+      --card: #1a1a2e;
+      --border: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Space Mono', monospace !important;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .hero-section {
+      padding: 4rem 2rem;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.15));
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    .tech-badges {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .tech-badge {
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(139, 92, 246, 0.5);
+      background: rgba(139, 92, 246, 0.15);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .code-block {
+      background: #0d1117;
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .code-block pre {
+      color: #e6edf3;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .demo-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .demo-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: 2px solid var(--accent);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      border: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.5);
+    }
+
+    .back-link {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+
+    .back-link:hover {
+      color: var(--accent);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .hero-section { padding: 2rem 1rem; min-height: auto; padding-top: 6rem; }
+      .container { padding: 1rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .back-link { position: static; margin-bottom: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  
+  <a href="../" class="back-link">← Volver al Portafolio</a>
+  
+  <div class="hero-section">
+    <h1 class="hero-title">🎮 Portafolio 3D Interactivo</h1>
+    <p class="hero-subtitle">Experiencia inmersiva con cubos flotantes en Three.js. Los proyectos se presentan como objetos 3D que puedes explorar en un entorno inmersivo.</p>
+    
+    <div class="tech-badges">
+      <span class="tech-badge">Angular 21</span>
+      <span class="tech-badge">Three.js</span>
+      <span class="tech-badge">GSAP</span>
+      <span class="tech-badge">TypeScript</span>
+      <span class="tech-badge">Standalone</span>
+    </div>
+
+    <div class="cta-buttons">
+      <a href="https://github.com/Stefany-Mazas/portafolio/tree/main/portafolio-3d" class="btn btn-primary" target="_blank">
+        📂 Ver Código
+      </a>
+      <a href="dist/portafolio-3d/browser/index.html" class="btn btn-secondary" target="_blank">
+        🎮 Ver Demo 3D
+      </a>
+    </div>
+  </div>
+
+  <div class="container">
+    <section class="section">
+      <h2 class="section-title">✨ Características</h2>
+      
+      <div class="features-grid">
+        <article class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="feature-title">Experiencia 3D Inmersiva</h3>
+          <p class="feature-desc">Cubos flotantes con efectos glow. Interacción completa con mouse y touch.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🖱️</div>
+          <h3 class="feature-title">.Interacciones Ricas</h3>
+          <p class="feature-desc">Click para abrir proyectos, arrastrar para rotar, hover con efectos.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3 class="feature-title">Responsive</h3>
+          <p class="feature-desc">Funciona en desktop y móvil. Touch events integrados.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3 class="feature-title">Alto Rendimiento</h3>
+          <p class="feature-desc">Animaciones suaves a 60fps. requestAnimationFrame.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3 class="feature-title">Efectos Visuales</h3>
+          <p class="feature-desc">Partículas, glows, transiciones GSAP. UI overlay profesional.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🎨</div>
+<h3 class="feature-title">GSAP Animations</h3>
+          <p class="feature-desc">Animaciones complejas con GSAP. Entrada de cubos, hover effects.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">💻 Ejemplo de Código</h2>
+      
+      <h3 style="margin: 1rem 0; font-size: 1rem;">ThreeSceneComponent -Inicialización Three.js</h3>
+      <div class="code-block">
+<pre>private initThree() {
+  // Scene
+  this.scene = new THREE.Scene();
+  
+  // Camera
+  this.camera = new THREE.PerspectiveCamera(
+    60, window.innerWidth / window.innerHeight, 0.1, 1000
+  );
+  this.camera.position.z = 8;
+  
+  // Renderer
+  this.renderer = new THREE.WebGLRenderer({
+    canvas, antialias: true, alpha: true
+  });
+  this.renderer.setSize(window.innerWidth, window.innerHeight);
+  
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  this.scene.add(ambientLight);
+  
+  const pointLight = new THREE.PointLight(0x8b5cf6, 1, 100);
+  pointLight.position.set(5, 5, 5);
+  this.scene.add(pointLight);
+}</pre>
+      </div>
+
+      <h3 style="margin: 1rem 0; font-size: 1rem;">Signal para estado reactivo</h3>
+      <div class="code-block">
+<pre>// Signal para el proyecto seleccionado
+selectedProject = signal<Project | null>(null);
+
+// En el template (Angular 17+ control flow)
+@if (selectedProject()) {
+  <div class="project-card">
+    <h2>{{ selectedProject()!.name }}</h2>
+  </div>
+}</pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">🏗️ Arquitectura</h2>
+      
+      <div class="features-grid">
+        <article class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3 class="feature-title">Standalone Component</h3>
+          <p class="feature-desc">Sin NgModule. Importa dependencias directamente.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Signals</h3>
+          <p class="feature-desc">Estado reactivo moderno. Reemplaza BehaviorSubject.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🖼️</div>
+          <h3 class="feature-title">Inline Templates</h3>
+          <p class="feature-desc">Template y estilos en el mismo archivo.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3 class="feature-title">Raycaster</h3>
+          <p class="feature-desc">Detección de clics en objetos 3D.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">🎯 Decisiones Técnicas</h2>
+      
+      <div class="features-grid">
+        <article class="feature-card">
+          <div class="feature-icon">🤔</div>
+          <h3 class="feature-title">Three.js vs Babylon.js</h3>
+          <p class="feature-desc">Three.js tiene más documentación y ejemplos. Ecosistema mayor. Perfecto para demos.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">��</div>
+          <h3 class="feature-title">GSAP vs native</h3>
+          <p class="feature-desc">GSAP ofrece animaciones más controladas y easing profesional. Vale la pena el peso extra.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🤔</div>
+          <h3 class="feature-title">Standalone vs NgModule</h3>
+          <p class="feature-desc">Angular 17+ recomienda standalone. Menos boilerplate, mejor tree-shaking.</p>
+        </article>
+        
+        <article class="feature-card">
+          <div class="feature-icon">🤔</div>
+          <h3 class="feature-title">Signals vs RxJS</h3>
+          <p class="feature-desc">Signals para estado local simple. RxJS para flujos complejos (HTTP). Usar ambos según necesidad.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">🎯 Lo que este Proyecto Demuestra</h2>
+      
+      <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+        <li>✅ Integración de librerías 3D con Angular</li>
+        <li>✅Three.js con TypeScript tipado</li>
+        <li>✅ GSAP para animaciones profesionales</li>
+        <li>✅ Angular Standalone Components</li>
+        <li>✅ Signals para estado reactivo</li>
+        <li>✅ Control Flow moderno (@if, @for)</li>
+        <li>✅ Diseño responsive y mobile-friendly</li>
+        <li>✅ Documentación técnica con decisiones</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">🛠️ Tecnologías</h2>
+      
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 0.75rem; color: var(--accent);">Angular 21</td>
+          <td style="padding: 0.75rem; opacity: 0.8;">Framework principal</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 0.75rem; color: var(--accent);">Three.js</td>
+          <td style="padding: 0.75rem; opacity: 0.8;">Gráficos 3D</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 0.75rem; color: var(--accent);">GSAP</td>
+          <td style="padding: 0.75rem; opacity: 0.8;">Animaciones</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 0.75rem; color: var(--accent);">TypeScript</td>
+          <td style="padding: 0.75rem; opacity: 0.8;">Tipado estático</td>
+        </tr>
+        <tr>
+          <td style="padding: 0.75rem; color: var(--accent);">Vercel</td>
+          <td style="padding: 0.75rem; opacity: 0.8;">Despliegue</td>
+        </tr>
+      </table>
+    </section>
+  </div>
+
+  <footer>
+    <p>💜 Desarrollado por Stefany Mazas | Abril 2026</p>
+    <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+      <a href="https://github.com/Stefany-Mazas" style="color: var(--accent);">GitHub</a> | 
+      <a href="mailto:Stefanymazas@gmail.com" style="color: var(--accent);">Email</a>
+    </p>
+  </footer>
+
+</body>
+</html>
