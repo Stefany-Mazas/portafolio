@@ -1,6 +1,0 @@
-{
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "portafolio-3d/dist/portafolio-3d/browser",
-  "installCommand": "npm install",
-  "framework": "angular"
-}
