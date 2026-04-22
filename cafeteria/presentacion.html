@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../bootstrap.min.css">
+  <link rel="stylesheet" href="../style.css">
+  <title>Cafetería - Camper Café Pro | Stefany Mazas</title>
+  
+  <style>
+    :root {
+      --bg: #1F2024;
+      --text: #e2e8f0;
+      --accent: #8b5cf6;
+      --accent2: #06b6d4;
+      --card: #1e1e2e;
+      --border: #334155;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --accent: #7c3aed;
+      --accent2: #0891b2;
+      --card: #ffffff;
+      --border: #cbd5e1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Roboto Mono', monospace !important;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.4s, color 0.4s;
+      line-height: 1.6;
+    }
+
+    .back-link {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+      text-decoration: none;
+      padding: 0.8rem 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      border-color: var(--accent);
+      transform: translateX(-5px);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 6rem 2rem 4rem;
+    }
+
+    .project-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .project-badge {
+      display: inline-flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .badge {
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-client { background: #2b4d99; color: white; }
+    .badge-pos { background: #8c1a6c; color: white; }
+    .badge-pwa { background: #4caf50; color: white; }
+
+    .project-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .project-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .screenshot-container {
+      position: relative;
+      margin: 3rem 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px -20px rgba(0,0,0,0.4);
+    }
+
+    .screenshot {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s;
+    }
+
+    .screenshot-container:hover .screenshot {
+      transform: scale(1.02);
+    }
+
+    .screenshot-label {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .section {
+      margin: 3rem 0;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .feature-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .tech-tag {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .cta-section {
+      text-align: center;
+      margin: 4rem 0;
+      padding: 3rem;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
+      border-radius: 24px;
+    }
+
+    .cta-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: 2px solid var(--accent);
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      border: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.5);
+    }
+
+    .problem-solution {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .problem-solution {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        padding: 5rem 1rem 3rem;
+      }
+    }
+
+    .problem, .solution {
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    .problem {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .solution {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .problem h3, .solution h3 {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .problem h3 { color: #ef4444; }
+    .solution h3 { color: #22c55e; }
+  </style>
+</head>
+<body>
+  <!-- Botón volver -->
+  <a href="../index.html" class="back-link">
+    ← Volver al Portafolio
+  </a>
+
+  <div class="container">
+    <!-- Header del proyecto -->
+    <header class="project-header">
+      <div class="project-badge">
+        <span class="badge badge-client">📱 Cliente</span>
+        <span class="badge badge-pos">🏪 POS Scanner</span>
+        <span class="badge badge-pwa">📲 PWA</span>
+      </div>
+      <h1 class="project-title">☕ Camper Café Pro</h1>
+      <p class="project-subtitle">
+        Sistema completo de Order & Pickup con personalización de productos, 
+        generación de códigos QR y panel de administración para staff.
+      </p>
+    </header>
+
+    <!--Screenshot -->
+    <div class="screenshot-container">
+      <img src="../img/camp.png" alt="Camper Café Pro - Sistema de pedidos" class="screenshot">
+      <span class="screenshot-label">📱 Vista Cliente - Personalización de productos</span>
+    </div>
+
+    <!-- Problema y Solución -->
+    <div class="problem-solution">
+      <div class="problem">
+        <h3>🚨 El Problema</h3>
+        <p>En plataformas como Starbucks no puedes personalizar tu café con extras (leches especiales, shots adicionales) y ver el precio actualizado en tiempo real antes de pagar. Además, el proceso de recogida en tienda es confuso.</p>
+      </div>
+      <div class="solution">
+        <h3>💡 La Solución</h3>
+        <p>Sistema de pedidos con personalización completa, cálculo dinámico de precios en tiempo real, y dos métodos de pago: redirección a Didi Food o generación de QR para pago en tienda con validación automática.</p>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <section class="section">
+      <h2 class="section-title">✨ Funcionalidades Principales</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🛒</div>
+          <h3 class="feature-title">Carrito Inteligente</h3>
+          <p class="feature-desc">Personalización completa de productos: tamaño, tipo de leche, shots extra. Cálculo dinámico del precio en tiempo real.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📲</div>
+          <h3 class="feature-title">App PWA Instalable</h3>
+          <p class="feature-desc">Funciona sin internet, se instala en el dispositivo como app nativa. Experiencia offline con sync posterior.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🏪</div>
+          <h3 class="feature-title">POS Scanner</h3>
+          <p class="feature-desc">Panel para staff con escáner de códigos QR. Valida pedidos, muestra historial y calcula totales automáticamente.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3 class="feature-title">UX Pulida</h3>
+          <p class="feature-desc">Skeleton loaders, toasts con undo, focus trap para accesibilidad, modo oscuro, y animaciones suaves.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">♿</div>
+          <h3 class="feature-title">Accesibilidad WCAG</h3>
+          <p class="feature-desc">Skip link, announcements para screen readers, navegación por teclado, y ARIA labels.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3 class="feature-title">Sincronización en Tiempo Real</h3>
+          <p class="feature-desc">Dos vistas (cliente y admin) comparten datos via localStorage. Abre ambas en pestañas separadas para ver la magia.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="section">
+      <h2 class="section-title">🛠️ Stack Tecnológico</h2>
+      <div class="tech-tags">
+        <span class="tech-tag">HTML5 Semántico</span>
+        <span class="tech-tag">CSS3 (Grid/Flexbox)</span>
+        <span class="tech-tag">JavaScript Vanilla</span>
+        <span class="tech-tag">LocalStorage</span>
+        <span class="tech-tag">QRCode.js</span>
+        <span class="tech-tag">PWA</span>
+        <span class="tech-tag">ARIA</span>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <h2>🎮 Pruébalo Ahora</h2>
+      <p>Abre ambas vistas en pestañas separadas para ver la sincronización en tiempo real</p>
+      <div class="cta-buttons">
+        <a href="camp.html" class="btn btn-primary" target="_blank">🛍️ Ver Tienda (Cliente)</a>
+        <a href="scanner.html" class="btn btn-secondary" target="_blank">🏪 Ver Panel Staff (POS)</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tema oscuro/claro desde el padre
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  </script>
+</body>
+</html>

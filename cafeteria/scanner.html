@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Camper Café Pro - Sistema POS para gestión de pedidos y recogida en tienda con QR">
+<meta name="theme-color" content="#2b4d99">
+<title>🏪 Camper Café - POS Scanner | Gestión de pedidos</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: 'Roboto', sans-serif;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+min-height: 100vh;
+padding: 2rem;
+}
+.container {
+max-width: 900px;
+margin: 0 auto;
+}
+.card {
+background: white;
+border-radius: 16px;
+box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+overflow: hidden;
+margin-bottom: 1.5rem;
+}
+.card-header {
+background: linear-gradient(135deg, #2b4d99, #8c1a6c);
+color: white;
+padding: 1.5rem;
+text-align: center;
+}
+.card-header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.card-header p { opacity: 0.9; }
+.card-body { padding: 2rem; }
+.tabs {
+display: flex;
+gap: 0.5rem;
+margin-bottom: 1.5rem;
+border-bottom: 2px solid #e0e0e0;
+flex-wrap: wrap;
+}
+.tab-btn {
+padding: 0.75rem 1.5rem;
+background: none;
+border: none;
+cursor: pointer;
+font-size: 1rem;
+font-weight: 500;
+color: #666;
+transition: all 0.3s;
+}
+.tab-btn.active {
+color: #2b4d99;
+border-bottom: 2px solid #2b4d99;
+margin-bottom: -2px;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.search-box { margin-bottom: 1.5rem; }
+.search-input {
+width: 100%;
+padding: 1rem;
+font-size: 1rem;
+border: 2px solid #e0e0e0;
+border-radius: 8px;
+transition: all 0.3s;
+}
+.search-input:focus { outline: none; border-color: #667eea; }
+.order-details {
+background: #f8f9fa;
+border-radius: 12px;
+padding: 1.5rem;
+margin-top: 1rem;
+}
+.order-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 1rem;
+padding-bottom: 1rem;
+border-bottom: 2px solid #e0e0e0;
+flex-wrap: wrap;
+gap: 0.5rem;
+}
+.order-id {
+font-family: monospace;
+font-size: 1.1rem;
+font-weight: bold;
+color: #2b4d99;
+}
+.order-status {
+padding: 0.25rem 0.75rem;
+border-radius: 20px;
+font-size: 0.8rem;
+font-weight: 600;
+}
+.status-pendiente { background: #ff9800; color: white; }
+.status-preparando { background: #2196f3; color: white; }
+.status-listo { background: #4caf50; color: white; }
+.status-entregado { background: #9e9e9e; color: white; }
+.status-cancelado { background: #f44336; color: white; }
+.items-list { margin: 1rem 0; }
+.item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0.75rem 0;
+border-bottom: 1px solid #e0e0e0;
+flex-wrap: wrap;
+gap: 0.5rem;
+}
+.item-info h4 { margin-bottom: 0.25rem; }
+.item-info p { font-size: 0.85rem; color: #666; }
+.item-price { font-weight: bold; color: #c7254e; }
+.order-total {
+display: flex;
+justify-content: space-between;
+margin-top: 1rem;
+padding-top: 1rem;
+border-top: 2px solid #e0e0e0;
+font-size: 1.2rem;
+font-weight: bold;
+}
+.price-warning {
+background: #ffebee;
+color: #c62828;
+padding: 0.5rem;
+border-radius: 8px;
+margin-top: 0.5rem;
+font-size: 0.85rem;
+text-align: center;
+}
+.order-actions {
+display: flex;
+gap: 0.5rem;
+margin-top: 1.5rem;
+flex-wrap: wrap;
+}
+.btn {
+padding: 0.75rem 1.25rem;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-weight: 600;
+transition: all 0.3s;
+flex: 1;
+min-width: 120px;
+}
+.btn-primary { background: #2196f3; color: white; }
+.btn-success { background: #4caf50; color: white; }
+.btn-warning { background: #ff9800; color: white; }
+.btn-danger { background: #f44336; color: white; }
+.btn-secondary { background: #9e9e9e; color: white; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.orders-list {
+max-height: 500px;
+overflow-y: auto;
+}
+.order-item {
+background: #f8f9fa;
+border-radius: 8px;
+padding: 1rem;
+margin-bottom: 0.5rem;
+cursor: pointer;
+transition: all 0.3s;
+border-left: 4px solid transparent;
+}
+.order-item:hover { background: #e8e8e8; transform: translateX(5px); }
+.order-item.pendiente { border-left-color: #ff9800; }
+.order-item.preparando { border-left-color: #2196f3; }
+.order-item.listo { border-left-color: #4caf50; }
+.order-item.entregado { border-left-color: #9e9e9e; }
+.order-item.cancelado { border-left-color: #f44336; }
+.order-item-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 0.5rem;
+flex-wrap: wrap;
+gap: 0.5rem;
+}
+.order-item-id { font-family: monospace; font-weight: bold; }
+.order-item-total { font-weight: bold; color: #c7254e; }
+.stats {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+gap: 1rem;
+margin-bottom: 1.5rem;
+}
+.stat-card {
+background: linear-gradient(135deg, #667eea, #764ba2);
+color: white;
+padding: 1rem;
+border-radius: 12px;
+text-align: center;
+}
+.stat-number { font-size: 1.8rem; font-weight: bold; }
+.stat-label { font-size: 0.8rem; opacity: 0.9; }
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 1000;
+align-items: center;
+justify-content: center;
+}
+.modal-content {
+background: white;
+padding: 2rem;
+border-radius: 16px;
+max-width: 500px;
+width: 90%;
+max-height: 90vh;
+overflow-y: auto;
+}
+.modal input, .modal select, .modal textarea {
+width: 100%;
+padding: 0.75rem;
+margin: 0.5rem 0;
+border: 1px solid #e0e0e0;
+border-radius: 8px;
+}
+.modal-buttons { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+.toast {
+position: fixed;
+bottom: 20px;
+right: 20px;
+padding: 12px 20px;
+border-radius: 8px;
+color: white;
+z-index: 2000;
+animation: slideIn 0.3s ease;
+}
+.toast.success { background: #4caf50; }
+.toast.error { background: #f44336; }
+.toast.warning { background: #ff9800; }
+.toast.info { background: #2196f3; }
+@keyframes slideIn {
+from { transform: translateX(100%); opacity: 0; }
+to { transform: translateX(0); opacity: 1; }
+}
+.refresh-btn {
+background: none;
+border: none;
+cursor: pointer;
+font-size: 1.2rem;
+padding: 0.5rem;
+margin-left: 0.5rem;
+color: #2b4d99;
+}
+.empty-state {
+text-align: center;
+padding: 3rem;
+color: #999;
+}
+@media (max-width: 768px) {
+body { padding: 1rem; }
+.order-actions { flex-direction: column; }
+.btn { width: 100%; }
+.stats { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<div class="card-header">
+<h1>🏪 Camper Café - POS Scanner</h1>
+<p>Sistema de gestión de pedidos | Recogida en tienda</p>
+</div>
+<div class="card-body">
+<div class="tabs">
+<button class="tab-btn active" data-tab="search">🔍 Buscar Orden</button>
+<button class="tab-btn" data-tab="orders">📋 Órdenes del Día</button>
+<button class="tab-btn" data-tab="history">📊 Historial Completo</button>
+<button class="tab-btn" data-tab="create">➕ Crear Orden Manual</button>
+</div>
+<div id="tab-search" class="tab-content active">
+<div class="search-box">
+<input type="text" id="orderSearch" class="search-input" placeholder="🔍 Ingresa el ID de orden (ej: ORD-XXXXXX-XXXXXX)" autofocus>
+</div>
+<div id="orderResult"></div>
+</div>
+<div id="tab-orders" class="tab-content">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+<h3>📋 Órdenes de hoy</h3>
+<button class="refresh-btn" onclick="refreshAllData()" title="Actualizar">🔄</button>
+</div>
+<div class="stats" id="dailyStats"></div>
+<div class="search-box">
+<input type="text" id="filterOrders" class="search-input" placeholder="🔍 Filtrar por ID o producto...">
+</div>
+<div class="orders-list" id="ordersList"></div>
+</div>
+<div id="tab-history" class="tab-content">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+<h3>📊 Historial de órdenes</h3>
+<button class="refresh-btn" onclick="refreshAllData()" title="Actualizar">🔄</button>
+</div>
+<div class="stats" id="historyStats"></div>
+<div class="search-box">
+<input type="text" id="filterHistory" class="search-input" placeholder="🔍 Buscar en historial...">
+<div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+<button id="exportExcel" class="btn btn-success" style="flex: 1;">📊 Exportar Excel</button>
+<button id="printReport" class="btn btn-primary" style="flex: 1;">🖨️ Imprimir Reporte</button>
+<button id="clearHistory" class="btn btn-danger" style="flex: 1;">🗑️ Limpiar Historial</button>
+</div>
+</div>
+<div class="orders-list" id="historyList"></div>
+</div>
+<div id="tab-create" class="tab-content">
+<h3>➕ Crear orden manual</h3>
+<form id="createOrderForm">
+<div class="search-box">
+<label>Producto:</label>
+<select id="productSelect" class="search-input" style="margin-bottom: 1rem;">
+<option value="">Seleccionar producto...</option>
+</select>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+<div>
+<label>Cantidad:</label>
+<input type="number" id="productQuantity" value="1" min="1" class="search-input">
+</div>
+<div>
+<label>Tamaño:</label>
+<select id="productSize" class="search-input">
+<option value="Grande">Grande</option>
+<option value="Venti">Venti (+$5)</option>
+<option value="Extra Hot">Extra Hot (+$10)</option>
+</select>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+<div>
+<label>Shots extra:</label>
+<select id="productShots" class="search-input">
+<option value="0">Ninguno</option>
+<option value="1">+1 Shot (+$14)</option>
+<option value="2">+2 Shots (+$28)</option>
+</select>
+</div>
+<div>
+<label>Leche:</label>
+<select id="productMilk" class="search-input">
+<option value="normal">Normal</option>
+<option value="deslactosada">Deslactosada Light</option>
+<option value="almendra">Bebida de Coco</option>
+</select>
+</div>
+</div>
+<div class="search-box" style="margin-top: 1rem;">
+<label>Notas:</label>
+<textarea id="orderNotes" rows="2" class="search-input" placeholder="Notas adicionales..."></textarea>
+</div>
+<button type="button" id="addItemBtn" class="btn btn-primary" style="margin-top: 1rem;">➕ Agregar item</button>
+<div style="margin-top: 1.5rem;">
+<h4>🛒 Items agregados:</h4>
+<div id="manualItemsList" style="max-height: 200px; overflow-y: auto;"></div>
+</div>
+<div class="order-total" style="margin-top: 1rem;">
+<span>💰 Total:</span>
+<span id="manualTotal" style="color: #c7254e;">$0.00</span>
+</div>
+<button type="button" id="createOrderBtn" class="btn btn-success" style="margin-top: 1rem; width: 100%;">✅ Crear orden</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<div id="editModal" class="modal">
+<div class="modal-content">
+<h3>✏️ Editar Orden</h3>
+<input type="text" id="editOrderId" readonly>
+<label>Estado:</label>
+<select id="editEstado">
+<option value="pendiente">⏳ Pendiente</option>
+<option value="preparando">🔥 En preparación</option>
+<option value="listo">✅ Listo para recoger</option>
+<option value="entregado">💰 Entregado</option>
+<option value="cancelado">❌ Cancelado</option>
+</select>
+<label>Notas adicionales:</label>
+<textarea id="editNotas" rows="3" placeholder="Notas para la cocina..."></textarea>
+<div class="modal-buttons">
+<button id="saveEdit" class="btn btn-success">💾 Guardar cambios</button>
+<button id="closeEditModal" class="btn btn-secondary">Cancelar</button>
+</div>
+</div>
+</div>
+<div id="confirmModal" class="modal">
+<div class="modal-content">
+<h3 id="confirmTitle">⚠️ Confirmar</h3>
+<p id="confirmMessage">¿Estás seguro de realizar esta acción?</p>
+<div class="modal-buttons">
+<button id="confirmYes" class="btn btn-danger">Sí, continuar</button>
+<button id="confirmNo" class="btn btn-secondary">Cancelar</button>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCRIPT CORREGIDO ==================== -->
+<script>
+// ==================== MENÚ DE PRODUCTOS (para validación de precios) ====================
+const menuItems = [
+{ id: 1, name: "Cold Brew", price: 104.00 },
+{ id: 2, name: "Cajeta Latte", price: 112.00 },
+{ id: 3, name: "Mocha Blanco", price: 104.00 },
+{ id: 4, name: "Chocolate Cream Frappuccino®", price: 112.00 },
+{ id: 5, name: "Cajeta Frappuccino®", price: 112.00 },
+{ id: 6, name: "Frappuccino® para Dos", price: 224.00 },
+{ id: 7, name: "Cupido Frappuccino®", price: 124.00 },
+{ id: 8, name: "Frappuccino® más Cake pop", price: 159.00 },
+{ id: 9, name: "Helado Chai Latte + Shot", price: 124.00 },
+{ id: 10, name: "Skies Pearls Drink", price: 124.00 },
+{ id: 11, name: "Pastel con Café", price: 149.00 },
+{ id: 12, name: "Power Lunch", price: 149.00 },
+{ id: 13, name: "Trenza de chocolate", price: 85.00 },
+{ id: 14, name: "Cheesecake Frambuesa", price: 99.00 }
+];
+
+// ==================== ESTADOS DE ORDEN ====================
+const ESTADOS = {
+pendiente: { texto: '⏳ Pendiente', class: 'status-pendiente' },
+preparando: { texto: '🔥 En preparación', class: 'status-preparando' },
+listo: { texto: '✅ Listo para recoger', class: 'status-listo' },
+entregado: { texto: '💰 Entregado', class: 'status-entregado' },
+cancelado: { texto: '❌ Cancelado', class: 'status-cancelado' }
+};
+
+// ==================== VARIABLES GLOBALES ====================
+let orders = [];
+let manualItems = [];
+let currentConfirmCallback = null;
+let camperCafeChannel = null; // ✅ Referencia global para BroadcastChannel
+
+// ==================== VALIDACIÓN DE PRECIOS ====================
+function validarPrecioOrden(orden) {
+let totalReal = 0;
+orden.items.forEach(item => {
+const productoReal = menuItems.find(p => p.id === item.id);
+if (!productoReal) {
+console.warn('Producto no encontrado:', item.name);
+return;
+}
+let precioItem = productoReal.price;
+if (item.size === 'Venti') precioItem += 5;
+if (item.size === 'Extra Hot') precioItem += 10;
+if (item.shots && item.shots > 0) precioItem += (item.shots * 14);
+totalReal += (precioItem * item.quantity);
+});
+const diferencia = Math.abs(totalReal - orden.total);
+const esValido = diferencia <= 0.01;
+return {
+valido: esValido,
+totalReal: totalReal,
+mensaje: esValido ? null : `⚠️ ALERTA: Precio manipulado. Total real: $${totalReal.toFixed(2)}`
+};
+}
+
+// ==================== FUNCIONES DE DATOS ====================
+function loadOrders() {
+const saved = localStorage.getItem('camperCafeOrders');
+if (saved) {
+orders = JSON.parse(saved);
+console.log('Órdenes cargadas:', orders.length);
+} else {
+orders = [];
+saveOrders();
+}
+}
+
+function saveOrders() {
+localStorage.setItem('camperCafeOrders', JSON.stringify(orders));
+}
+
+function generateOrderId() {
+const timestamp = Date.now().toString(36).toUpperCase();
+const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+return `ORD-${timestamp}-${random}`;
+}
+
+function getTodaysOrders() {
+const today = new Date().toDateString();
+return orders.filter(o => new Date(o.timestamp).toDateString() === today);
+}
+
+function getEstadoTexto(estado) {
+return ESTADOS[estado]?.texto || estado;
+}
+
+function findOrder(orderId) {
+return orders.find(o => o.id === orderId);
+}
+
+function updateOrder(orderId, updates) {
+const index = orders.findIndex(o => o.id === orderId);
+if (index !== -1) {
+orders[index] = { ...orders[index], ...updates, actualizado: new Date().toISOString() };
+saveOrders();
+return true;
+}
+return false;
+}
+
+function deleteOrder(orderId) {
+const index = orders.findIndex(o => o.id === orderId);
+if (index !== -1) {
+orders.splice(index, 1);
+saveOrders();
+return true;
+}
+return false;
+}
+
+function createOrder(orderData) {
+const order = {
+id: generateOrderId(),
+items: orderData.items,
+total: orderData.total,
+timestamp: new Date().toISOString(),
+estado: 'pendiente',
+tipo: 'pickup',
+notas: orderData.notas || ''
+};
+orders.push(order);
+saveOrders();
+return order;
+}
+
+// ==================== ESTADÍSTICAS ====================
+function updateDailyStats() {
+const todayOrders = getTodaysOrders();
+const stats = {
+total: todayOrders.length,
+pendientes: todayOrders.filter(o => o.estado === 'pendiente').length,
+preparando: todayOrders.filter(o => o.estado === 'preparando').length,
+listo: todayOrders.filter(o => o.estado === 'listo').length,
+entregado: todayOrders.filter(o => o.estado === 'entregado').length,
+cancelado: todayOrders.filter(o => o.estado === 'cancelado').length,
+totalVentas: todayOrders.filter(o => o.estado === 'entregado').reduce((s, o) => s + o.total, 0)
+};
+document.getElementById('dailyStats').innerHTML = `
+<div class="stat-card"><div class="stat-number">${stats.total}</div><div class="stat-label">Total órdenes</div></div>
+<div class="stat-card"><div class="stat-number">${stats.pendientes}</div><div class="stat-label">Pendientes</div></div>
+<div class="stat-card"><div class="stat-number">${stats.preparando}</div><div class="stat-label">Preparando</div></div>
+<div class="stat-card"><div class="stat-number">${stats.listo}</div><div class="stat-label">Listos</div></div>
+<div class="stat-card"><div class="stat-number">$${stats.totalVentas.toFixed(2)}</div><div class="stat-label">Ventas del día</div></div>
+`;
+}
+
+function updateHistoryStats() {
+const stats = {
+total: orders.length,
+totalVentas: orders.filter(o => o.estado === 'entregado').reduce((s, o) => s + o.total, 0),
+promedio: orders.filter(o => o.estado === 'entregado').length ?
+(orders.filter(o => o.estado === 'entregado').reduce((s, o) => s + o.total, 0) /
+orders.filter(o => o.estado === 'entregado').length).toFixed(2) : 0
+};
+document.getElementById('historyStats').innerHTML = `
+<div class="stat-card"><div class="stat-number">${stats.total}</div><div class="stat-label">Total órdenes</div></div>
+<div class="stat-card"><div class="stat-number">$${stats.totalVentas.toFixed(2)}</div><div class="stat-label">Total ventas</div></div>
+<div class="stat-card"><div class="stat-number">$${stats.promedio}</div><div class="stat-label">Ticket promedio</div></div>
+`;
+}
+
+// ==================== RENDERIZADO CON VALIDACIÓN ====================
+function renderOrderDetails(order) {
+const container = document.getElementById('orderResult');
+if (!order) {
+container.innerHTML = '<div class="order-details" style="background: #ffebee; color: #f44336;">❌ Orden no encontrada</div>';
+return;
+}
+const validacion = validarPrecioOrden(order);
+const precioWarning = !validacion.valido ? `<div class="price-warning">${validacion.mensaje}</div>` : '';
+container.innerHTML = `
+<div class="order-details">
+<div class="order-header">
+<div>
+<div class="order-id">📋 ${order.id}</div>
+<div style="font-size: 0.8rem;">${new Date(order.timestamp).toLocaleString()}</div>
+</div>
+<div class="order-status ${ESTADOS[order.estado]?.class || 'status-pendiente'}">${getEstadoTexto(order.estado)}</div>
+</div>
+${precioWarning}
+<div class="items-list">
+<h4>🛒 Items del pedido:</h4>
+${order.items.map(item => `
+<div class="item">
+<div class="item-info">
+<h4>${item.quantity}x ${item.name}</h4>
+<p>${item.size || 'Grande'} • ${item.shots > 0 ? `+${item.shots} shot${item.shots > 1 ? 's' : ''}` : 'Sin extra'} • ${item.milk === 'normal' ? 'Leche normal' : item.milk === 'deslactosada' ? 'Deslactosada Light' : 'Bebida de Coco'}</p>
+</div>
+<div class="item-price">$${((item.validatedPrice || item.price) / item.quantity).toFixed(2)} c/u</div>
+</div>
+`).join('')}
+</div>
+<div class="order-total">
+<span>💰 Total:</span>
+<span style="color: #c7254e;">$${order.total.toFixed(2)}</span>
+</div>
+<div class="order-total" style="border-top: none; padding-top: 0;">
+<span>🔒 Total validado:</span>
+<span style="color: ${validacion.valido ? '#4caf50' : '#f44336'};">$${validacion.totalReal.toFixed(2)}</span>
+</div>
+${order.notas ? `<div style="margin: 1rem 0; padding: 0.5rem; background: #fff3e0; border-radius: 8px;">📝 Notas: ${order.notas}</div>` : ''}
+<div class="order-actions">
+${order.estado !== 'entregado' && order.estado !== 'cancelado' ? `
+<button class="btn btn-warning" onclick="actualizarEstado('${order.id}', 'preparando')">🔥 En preparación</button>
+<button class="btn btn-primary" onclick="actualizarEstado('${order.id}', 'listo')">✅ Marcar como listo</button>
+<button class="btn btn-success" onclick="marcarEntregado('${order.id}')">💰 Cobrar y entregar</button>
+<button class="btn btn-secondary" onclick="openEditModal('${order.id}')">✏️ Editar</button>
+<button class="btn btn-danger" onclick="cancelarOrden('${order.id}')">❌ Cancelar</button>
+` : `
+<button class="btn btn-secondary" onclick="openEditModal('${order.id}')">✏️ Editar</button>
+${order.estado === 'cancelado' ? `<button class="btn btn-warning" onclick="reactivarOrden('${order.id}')">🔄 Reactivar</button>` : ''}
+<button class="btn btn-danger" onclick="eliminarOrden('${order.id}')">🗑️ Eliminar</button>
+`}
+</div>
+<div class="crud-actions">
+<button class="btn btn-primary" onclick="imprimirTicket('${order.id}')">🖨️ Imprimir ticket</button>
+</div>
+</div>
+`;
+}
+
+function actualizarEstado(orderId, nuevoEstado) {
+if (updateOrder(orderId, { estado: nuevoEstado })) {
+showToast(`Orden ${orderId} → ${getEstadoTexto(nuevoEstado)}`, 'success');
+const order = findOrder(orderId);
+if (order) renderOrderDetails(order);
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+}
+}
+
+function marcarEntregado(orderId) {
+showConfirm('Confirmar entrega', '¿Confirmar pago y entrega de esta orden?', () => {
+const order = findOrder(orderId);
+if (!order) return;
+const validacion = validarPrecioOrden(order);
+if (!validacion.valido) {
+showToast(validacion.mensaje, 'error');
+return;
+}
+updateOrder(orderId, { estado: 'entregado', completado: new Date().toISOString() });
+showToast(`✅ Orden ${orderId} completada`, 'success');
+renderOrderDetails(findOrder(orderId));
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+});
+}
+
+function cancelarOrden(orderId) {
+showConfirm('Cancelar orden', '¿Estás seguro de cancelar esta orden?', () => {
+updateOrder(orderId, { estado: 'cancelado', cancelado: new Date().toISOString() });
+showToast(`❌ Orden ${orderId} cancelada`, 'warning');
+renderOrderDetails(findOrder(orderId));
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+});
+}
+
+function reactivarOrden(orderId) {
+showConfirm('Reactivar orden', '¿Reactivar esta orden cancelada?', () => {
+updateOrder(orderId, { estado: 'pendiente' });
+showToast(`🔄 Orden ${orderId} reactivada`, 'success');
+renderOrderDetails(findOrder(orderId));
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+});
+}
+
+function eliminarOrden(orderId) {
+showConfirm('Eliminar orden', '⚠️ ¿Eliminar esta orden permanentemente? Esta acción no se puede deshacer.', () => {
+if (deleteOrder(orderId)) {
+showToast(`🗑️ Orden ${orderId} eliminada`, 'error');
+document.getElementById('orderResult').innerHTML = '';
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+updateHistoryStats();
+}
+});
+}
+
+function renderOrdersList(filter = '') {
+let todayOrders = getTodaysOrders();
+if (filter) {
+todayOrders = todayOrders.filter(o => o.id.toLowerCase().includes(filter.toLowerCase()) ||
+o.items.some(i => i.name.toLowerCase().includes(filter.toLowerCase())));
+}
+const container = document.getElementById('ordersList');
+if (todayOrders.length === 0) {
+container.innerHTML = '<div class="empty-state">📭 No hay órdenes para hoy</div>';
+return;
+}
+container.innerHTML = todayOrders.map(order => `
+<div class="order-item ${order.estado}" onclick="loadOrderById('${order.id}')">
+<div class="order-item-header">
+<span class="order-item-id">📋 ${order.id}</span>
+<span class="order-status ${ESTADOS[order.estado]?.class || 'status-pendiente'}">${getEstadoTexto(order.estado)}</span>
+</div>
+<div>${order.items.length} items • ${new Date(order.timestamp).toLocaleTimeString()}</div>
+<div class="order-item-total">$${order.total.toFixed(2)}</div>
+${order.notas ? `<div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">📝 ${order.notas.substring(0, 50)}${order.notas.length > 50 ? '...' : ''}</div>` : ''}
+</div>
+`).join('');
+}
+
+function renderHistoryList(filter = '') {
+let allOrders = [...orders].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+if (filter) {
+allOrders = allOrders.filter(o => o.id.toLowerCase().includes(filter.toLowerCase()) ||
+o.items.some(i => i.name.toLowerCase().includes(filter.toLowerCase())));
+}
+const container = document.getElementById('historyList');
+if (allOrders.length === 0) {
+container.innerHTML = '<div class="empty-state">📭 No hay órdenes en el historial</div>';
+return;
+}
+container.innerHTML = allOrders.map(order => `
+<div class="order-item ${order.estado}" onclick="loadOrderById('${order.id}')">
+<div class="order-item-header">
+<span class="order-item-id">📋 ${order.id}</span>
+<span class="order-status ${ESTADOS[order.estado]?.class || 'status-pendiente'}">${getEstadoTexto(order.estado)}</span>
+</div>
+<div>${order.items.length} items • ${new Date(order.timestamp).toLocaleString()}</div>
+<div class="order-item-total">$${order.total.toFixed(2)}</div>
+${order.notas ? `<div style="font-size: 0.8rem; color: #666;">📝 ${order.notas.substring(0, 50)}${order.notas.length > 50 ? '...' : ''}</div>` : ''}
+</div>
+`).join('');
+}
+
+function loadOrderById(orderId) {
+document.getElementById('orderSearch').value = orderId;
+const order = findOrder(orderId);
+renderOrderDetails(order);
+document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+document.querySelector('[data-tab="search"]').classList.add('active');
+document.getElementById('tab-search').classList.add('active');
+}
+
+// ==================== CREAR ORDEN MANUAL ====================
+function addManualItem() {
+const productSelect = document.getElementById('productSelect');
+const productId = productSelect.value;
+if (!productId) {
+showToast('Selecciona un producto', 'warning');
+return;
+}
+const product = menuItems.find(p => p.id == productId);
+const quantity = parseInt(document.getElementById('productQuantity').value) || 1;
+const size = document.getElementById('productSize').value;
+const shots = parseInt(document.getElementById('productShots').value) || 0;
+const milk = document.getElementById('productMilk').value;
+let price = product.price;
+if (size === 'Venti') price += 5;
+if (size === 'Extra Hot') price += 10;
+if (shots > 0) price += shots * 14;
+const item = {
+id: product.id,
+name: product.name,
+price: product.price,
+quantity: quantity,
+size: size,
+shots: shots,
+milk: milk,
+validatedPrice: price * quantity
+};
+manualItems.push(item);
+renderManualItems();
+updateManualTotal();
+productSelect.value = '';
+document.getElementById('productQuantity').value = '1';
+}
+
+function renderManualItems() {
+const container = document.getElementById('manualItemsList');
+if (manualItems.length === 0) {
+container.innerHTML = '<p style="color: #999;">No hay items agregados</p>';
+return;
+}
+container.innerHTML = manualItems.map((item, index) => `
+<div class="item">
+<div class="item-info">
+<h4>${item.quantity}x ${item.name}</h4>
+<p>${item.size} • ${item.shots > 0 ? `+${item.shots} shot` : 'Sin extra'} • ${item.milk === 'normal' ? 'Leche normal' : item.milk === 'deslactosada' ? 'Deslactosada Light' : 'Bebida de Coco'}</p>
+</div>
+<div style="display: flex; align-items: center; gap: 0.5rem;">
+<div class="item-price">$${(item.validatedPrice).toFixed(2)}</div>
+<button class="btn btn-danger" style="padding: 0.25rem 0.5rem;" onclick="removeManualItem(${index})">🗑️</button>
+</div>
+</div>
+`).join('');
+}
+
+function removeManualItem(index) {
+manualItems.splice(index, 1);
+renderManualItems();
+updateManualTotal();
+}
+
+function updateManualTotal() {
+const total = manualItems.reduce((sum, item) => sum + item.validatedPrice, 0);
+document.getElementById('manualTotal').textContent = `$${total.toFixed(2)}`;
+}
+
+function createManualOrder() {
+if (manualItems.length === 0) {
+showToast('Agrega al menos un item a la orden', 'warning');
+return;
+}
+const total = manualItems.reduce((sum, item) => sum + item.validatedPrice, 0);
+const notas = document.getElementById('orderNotes').value;
+const order = createOrder({
+items: manualItems,
+total: total,
+notas: notas
+});
+showToast(`✅ Orden ${order.id} creada`, 'success');
+manualItems = [];
+renderManualItems();
+updateManualTotal();
+document.getElementById('orderNotes').value = '';
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+updateHistoryStats();
+loadOrderById(order.id);
+}
+
+// ==================== EXPORTAR E IMPRIMIR ====================
+function exportToExcel() {
+const data = orders.map(o => ({
+'ID': o.id,
+'Fecha': new Date(o.timestamp).toLocaleString(),
+'Estado': getEstadoTexto(o.estado),
+'Items': o.items.map(i => `${i.quantity}x ${i.name}`).join(', '),
+'Total': o.total,
+'Notas': o.notas || ''
+}));
+if (data.length === 0) {
+showToast('No hay datos para exportar', 'warning');
+return;
+}
+const csv = [Object.keys(data[0]).join(','), ...data.map(row => Object.values(row).join(','))].join('\n');
+const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = `ordenes_${new Date().toISOString().split('T')[0]}.csv`;
+a.click();
+URL.revokeObjectURL(url);
+showToast('Reporte exportado', 'success');
+}
+
+function printReport() {
+const todayOrders = getTodaysOrders();
+const ventas = todayOrders.filter(o => o.estado === 'entregado').reduce((s, o) => s + o.total, 0);
+const ventana = window.open('', '_blank');
+ventana.document.write(`
+<html>
+<head>
+<title>Reporte Diario</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; }
+h1 { text-align: center; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background: #f5f5f5; }
+.total { margin-top: 20px; text-align: right; font-size: 1.2rem; }
+@media print { body { padding: 0; } button { display: none; } }
+</style>
+</head>
+<body>
+<h1>☕ CAMPER CAFÉ PRO</h1>
+<h2>Reporte de Ventas - ${new Date().toLocaleDateString()}</h2>
+${todayOrders.length === 0 ? '<p>No hay órdenes para hoy</p>' : `
+<table>
+<thead><tr><th>ID Orden</th><th>Hora</th><th>Estado</th><th>Items</th><th>Total</th></tr></thead>
+<tbody>
+${todayOrders.map(o => `
+<tr>
+<td>${o.id}</td>
+<td>${new Date(o.timestamp).toLocaleTimeString()}</td>
+<td>${getEstadoTexto(o.estado)}</td>
+<td>${o.items.length}</td>
+<td>$${o.total.toFixed(2)}</td>
+</tr>
+`).join('')}
+</tbody>
+</table>
+<div class="total">Total ventas: $${ventas.toFixed(2)}</div>
+<div class="total">Total órdenes: ${todayOrders.length}</div>
+`}
+<button onclick="window.print()" style="margin-top: 20px; padding: 10px;">🖨️ Imprimir</button>
+</body>
+</html>
+`);
+ventana.document.close();
+}
+
+function imprimirTicket(orderId) {
+const order = findOrder(orderId);
+if (!order) return;
+const ventana = window.open('', '_blank');
+ventana.document.write(`
+<html>
+<head>
+<title>Ticket ${order.id}</title>
+<style>
+body { font-family: monospace; width: 300px; margin: 0 auto; padding: 20px; }
+h2 { text-align: center; }
+hr { margin: 10px 0; }
+.total { text-align: right; font-size: 1.2rem; font-weight: bold; margin-top: 10px; }
+.footer { text-align: center; margin-top: 30px; font-size: 0.8rem; }
+@media print { body { padding: 0; } }
+</style>
+</head>
+<body>
+<h2>☕ CAMPER CAFÉ PRO</h2>
+<p><strong>Orden:</strong> ${order.id}</p>
+<p><strong>Fecha:</strong> ${new Date(order.timestamp).toLocaleString()}</p>
+<hr>
+${order.items.map(i => `
+<p>${i.quantity}x ${i.name}<br>
+<small>${i.size || 'Grande'} • ${i.shots > 0 ? `+${i.shots} shot` : ''} • ${i.milk === 'normal' ? 'Leche normal' : i.milk === 'deslactosada' ? 'Deslactosada' : 'Coco'}</small><br>
+<small>$${((i.validatedPrice || i.price) / i.quantity).toFixed(2)} c/u</small></p>
+`).join('')}
+<hr>
+<div class="total">Total: $${order.total.toFixed(2)}</div>
+<div class="footer">¡Gracias por tu compra!</div>
+</body>
+</html>
+`);
+ventana.print();
+}
+
+// ==================== MODALES ====================
+function openEditModal(orderId) {
+const order = findOrder(orderId);
+if (!order) return;
+document.getElementById('editOrderId').value = orderId;
+document.getElementById('editEstado').value = order.estado;
+document.getElementById('editNotas').value = order.notas || '';
+document.getElementById('editModal').style.display = 'flex';
+}
+
+function saveEdit() {
+const orderId = document.getElementById('editOrderId').value;
+const newEstado = document.getElementById('editEstado').value;
+const newNotas = document.getElementById('editNotas').value;
+if (updateOrder(orderId, { estado: newEstado, notas: newNotas })) {
+showToast(`✅ Orden ${orderId} actualizada`, 'success');
+renderOrderDetails(findOrder(orderId));
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+document.getElementById('editModal').style.display = 'none';
+}
+}
+
+function showConfirm(title, message, callback) {
+document.getElementById('confirmTitle').textContent = title;
+document.getElementById('confirmMessage').textContent = message;
+currentConfirmCallback = callback;
+document.getElementById('confirmModal').style.display = 'flex';
+}
+
+function showToast(message, type) {
+const toast = document.createElement('div');
+toast.className = `toast ${type}`;
+toast.textContent = message;
+document.body.appendChild(toast);
+setTimeout(() => toast.remove(), 3000);
+}
+
+function refreshAllData() {
+loadOrders();
+updateDailyStats();
+renderOrdersList(document.getElementById('filterOrders')?.value || '');
+renderHistoryList(document.getElementById('filterHistory')?.value || '');
+updateHistoryStats();
+showToast('Datos actualizados', 'info');
+}
+
+function searchOrder() {
+const input = document.getElementById('orderSearch');
+const orderId = input.value.trim();
+if (orderId) {
+const order = findOrder(orderId);
+renderOrderDetails(order);
+} else {
+document.getElementById('orderResult').innerHTML = '';
+}
+}
+
+// ==================== INICIALIZACIÓN ====================
+document.addEventListener('DOMContentLoaded', () => {
+// ✅ 1. Inicializar BroadcastChannel AL CARGAR (fuera de cualquier evento)
+if (typeof BroadcastChannel !== 'undefined') {
+camperCafeChannel = new BroadcastChannel('camper-cafe-channel');
+camperCafeChannel.onmessage = (event) => {
+if (event.data?.type === 'NEW_ORDER') {
+console.log('📡 Nueva orden vía BroadcastChannel:', event.data.order?.id);
+refreshAllData();
+showToast(`📱 Nueva orden: ${event.data.order?.id}`, 'info');
+}
+};
+console.log('✅ BroadcastChannel inicializado');
+}
+
+// ✅ 2. Listener de storage para fallback (separado)
+window.addEventListener('storage', (e) => {
+if (e.key === 'camperCafeOrders') {
+console.log('🔄 Cambio detectado en localStorage');
+refreshAllData();
+showToast('📱 Nueva orden recibida (localStorage)', 'info');
+}
+});
+
+// ✅ 3. Polling de respaldo cada 5 segundos
+setInterval(() => {
+const saved = localStorage.getItem('camperCafeOrders');
+if (saved) {
+const parsedOrders = JSON.parse(saved);
+if (parsedOrders.length !== orders.length) {
+refreshAllData();
+showToast('🔄 Órdenes actualizadas', 'info');
+}
+}
+}, 5000);
+
+// ✅ 4. Cerrar canal al salir de la página
+window.addEventListener('beforeunload', () => {
+if (camperCafeChannel) {
+camperCafeChannel.close();
+console.log('🔒 BroadcastChannel cerrado');
+}
+});
+
+// === Resto de inicialización ===
+loadMenuItems();
+loadOrders();
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+updateHistoryStats();
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+btn.classList.add('active');
+document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+});
+});
+
+document.getElementById('filterOrders')?.addEventListener('input', (e) => renderOrdersList(e.target.value));
+document.getElementById('filterHistory')?.addEventListener('input', (e) => renderHistoryList(e.target.value));
+document.getElementById('orderSearch')?.addEventListener('input', searchOrder);
+document.getElementById('orderSearch')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') searchOrder(); });
+
+document.getElementById('exportExcel')?.addEventListener('click', exportToExcel);
+document.getElementById('printReport')?.addEventListener('click', printReport);
+
+document.getElementById('clearHistory')?.addEventListener('click', () => {
+showConfirm('Limpiar historial', '⚠️ ¿Eliminar TODAS las órdenes? Esta acción no se puede deshacer.', () => {
+orders = [];
+saveOrders();
+showToast('Historial limpiado', 'success');
+updateDailyStats();
+renderOrdersList();
+renderHistoryList();
+updateHistoryStats();
+document.getElementById('orderResult').innerHTML = '';
+});
+});
+
+document.getElementById('addItemBtn')?.addEventListener('click', addManualItem);
+document.getElementById('createOrderBtn')?.addEventListener('click', createManualOrder);
+document.getElementById('saveEdit')?.addEventListener('click', saveEdit);
+document.getElementById('closeEditModal')?.addEventListener('click', () => {
+document.getElementById('editModal').style.display = 'none';
+});
+document.getElementById('confirmYes')?.addEventListener('click', () => {
+if (currentConfirmCallback) {
+currentConfirmCallback();
+currentConfirmCallback = null;
+}
+document.getElementById('confirmModal').style.display = 'none';
+});
+document.getElementById('confirmNo')?.addEventListener('click', () => {
+document.getElementById('confirmModal').style.display = 'none';
+currentConfirmCallback = null;
+});
+
+window.addEventListener('click', (e) => {
+if (e.target === document.getElementById('editModal')) {
+document.getElementById('editModal').style.display = 'none';
+}
+if (e.target === document.getElementById('confirmModal')) {
+document.getElementById('confirmModal').style.display = 'none';
+}
+});
+});
+
+function loadMenuItems() {
+const select = document.getElementById('productSelect');
+if (select) {
+select.innerHTML = '<option value="">Seleccionar producto...</option>';
+menuItems.forEach(item => {
+select.innerHTML += `<option value="${item.id}" data-price="${item.price}">${item.name} - $${item.price.toFixed(2)}</option>`;
+});
+}
+}
+</script>
+</body>
+</html>
