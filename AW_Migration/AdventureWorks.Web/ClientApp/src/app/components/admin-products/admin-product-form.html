@@ -1,0 +1,125 @@
+<div class="container-fluid" style="max-width: 800px;">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+      <i class="bi bi-gear"></i>
+      {{ isEditing() ? 'Edit Product' : 'New Product' }}
+    </h2>
+    <a routerLink="/admin/products" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+  </div>
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  <!-- Loading (cuando se-edita y está cargando datos) -->
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  }
+
+  <!-- Form -->
+  @if (!loading()) {
+    <form (ngSubmit)="onSubmit()" class="card shadow-sm">
+      <div class="card-body">
+        <div class="row g-3">
+          <!-- Name -->
+          <div class="col-12">
+            <label for="name" class="form-label">Name *</label>
+            <input type="text" id="name" class="form-control"
+                   [(ngModel)]="form.name" name="name"
+                   placeholder="Mountain Bike Pro 500"
+                   required />
+          </div>
+
+          <!-- Product Number -->
+          <div class="col-md-6">
+            <label for="productNumber" class="form-label">Product Number *</label>
+            <input type="text" id="productNumber" class="form-control"
+                   [(ngModel)]="form.productNumber" name="productNumber"
+                   placeholder="MB-500"
+                   required />
+          </div>
+
+          <!-- Color -->
+          <div class="col-md-6">
+            <label for="color" class="form-label">Color</label>
+            <input type="text" id="color" class="form-control"
+                   [(ngModel)]="form.color" name="color"
+                   placeholder="Black" />
+          </div>
+
+          <!-- Category -->
+          <div class="col-md-6">
+            <label for="category" class="form-label">Category</label>
+            <select id="category" class="form-select"
+                    [(ngModel)]="form.productSubcategoryID" name="category">
+              <option [ngValue]="null">— Select Category —</option>
+              @for (cat of categories(); track cat.productCategoryID) {
+                <option [value]="cat.productCategoryID">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Size -->
+          <div class="col-md-3">
+            <label for="size" class="form-label">Size</label>
+            <input type="text" id="size" class="form-control"
+                   [(ngModel)]="form.size" name="size"
+                   placeholder="L, M, 54" />
+          </div>
+
+          <!-- Weight -->
+          <div class="col-md-3">
+            <label for="weight" class="form-label">Weight (kg)</label>
+            <input type="number" id="weight" class="form-control"
+                   [(ngModel)]="form.weight" name="weight"
+                   step="0.1" min="0" />
+          </div>
+
+          <!-- List Price -->
+          <div class="col-md-6">
+            <label for="listPrice" class="form-label">List Price</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" id="listPrice" class="form-control"
+                     [(ngModel)]="form.listPrice" name="listPrice"
+                     step="0.01" min="0" />
+            </div>
+          </div>
+
+          <!-- Standard Cost -->
+          <div class="col-md-6">
+            <label for="standardCost" class="form-label">Standard Cost</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" id="standardCost" class="form-control"
+                     [(ngModel)]="form.standardCost" name="standardCost"
+                     step="0.01" min="0" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer d-flex justify-content-between">
+        <a routerLink="/admin/products" class="btn btn-outline-secondary">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary"
+                [disabled]="saving()">
+          @if (saving()) {
+            <span class="spinner-border spinner-border-sm me-1"></span>
+            Saving...
+          } @else {
+            <i class="bi bi-check-circle"></i>
+            {{ isEditing() ? 'Update Product' : 'Create Product' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>

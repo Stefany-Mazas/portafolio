@@ -1,0 +1,142 @@
+<div class="container-fluid">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="bi bi-gear"></i> Admin: Products</h2>
+    <a routerLink="/admin/products/new" class="btn btn-success">
+      <i class="bi bi-plus-circle"></i> New Product
+    </a>
+  </div>
+
+  @if (result()) {
+    <div class="mb-2">
+      <span class="text-muted">{{ result()!.total }} products total</span>
+    </div>
+  }
+
+  <!-- Search -->
+  <form class="row g-2 mb-4" (ngSubmit)="onSearch()">
+    <div class="col-md-8">
+      <input type="text" class="form-control"
+             placeholder="Search by name or product number..."
+             [(ngModel)]="searchTerm" name="search" />
+    </div>
+    <div class="col-md-4 d-flex gap-2">
+      <button type="submit" class="btn btn-primary flex-grow-1">
+        <i class="bi bi-search"></i> Search
+      </button>
+      <button type="button" class="btn btn-outline-secondary"
+              (click)="clearSearch()">Clear</button>
+    </div>
+  </form>
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Table -->
+  @if (!loading() && result()) {
+    <div class="table-responsive">
+      <table class="table table-hover table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Number</th>
+            <th>Category</th>
+            <th>Color</th>
+            <th class="text-end">List Price</th>
+            <th class="text-end">Cost</th>
+            <th>Status</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of result()!.items; track p.productID) {
+            <tr>
+              <td><code>{{ p.productID }}</code></td>
+              <td>
+                <a [routerLink]="['/admin/products', p.productID]">{{ p.name }}</a>
+              </td>
+              <td><code>{{ p.productNumber }}</code></td>
+              <td>{{ p.subcategory?.category?.name || '—' }}</td>
+              <td>
+                @if (p.color) {
+                  <span class="badge bg-secondary">{{ p.color }}</span>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-end">
+                {{ p.listPrice > 0 ? (p.listPrice | currency) : '—' }}
+              </td>
+              <td class="text-end">
+                {{ p.standardCost > 0 ? (p.standardCost | currency) : '—' }}
+              </td>
+              <td>
+                @if (p.productLine) {
+                  <span class="badge bg-info">{{ p.productLine }}</span>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="text-center">
+                <div class="btn-group btn-group-sm">
+                  <a [routerLink]="['/admin/products', p.productID]"
+                     class="btn btn-outline-primary" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <button type="button"
+                          class="btn btn-outline-danger"
+                          [disabled]="deletingId() === p.productID"
+                          (click)="confirmDelete(p)"
+                          title="Delete">
+                    @if (deletingId() === p.productID) {
+                      <span class="spinner-border spinner-border-sm"></span>
+                    } @else {
+                      <i class="bi bi-trash"></i>
+                    }
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="text-center text-muted py-4">
+                No products found.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+      <nav>
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage() === 1">
+            <button class="page-link" (click)="goTo(currentPage() - 1)">Previous</button>
+          </li>
+          @for (p of pages(); track p) {
+            <li class="page-item" [class.active]="p === currentPage()">
+              <button class="page-link" (click)="goTo(p)">{{ p }}</button>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+            <button class="page-link" (click)="goTo(currentPage() + 1)">Next</button>
+          </li>
+        </ul>
+      </nav>
+    }
+  }
+</div>
