@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Web", "AdventureWorks.Web\AdventureWorks.Web.csproj", "{DC901F16-823F-4778-B6EE-53F33EEF5980}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventureWorks.Web.Tests", "AdventureWorks.Web.Tests\AdventureWorks.Web.Tests.csproj", "{FB15D7B5-F1A9-4B4E-92C5-CF70F38B2A8B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC901F16-823F-4778-B6EE-53F33EEF5980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC901F16-823F-4778-B6EE-53F33EEF5980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC901F16-823F-4778-B6EE-53F33EEF5980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC901F16-823F-4778-B6EE-53F33EEF5980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB15D7B5-F1A9-4B4E-92C5-CF70F38B2A8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB15D7B5-F1A9-4B4E-92C5-CF70F38B2A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB15D7B5-F1A9-4B4E-92C5-CF70F38B2A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB15D7B5-F1A9-4B4E-92C5-CF70F38B2A8B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
